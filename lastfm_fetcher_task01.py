@@ -14,8 +14,8 @@ SEED_USERS_FILE = "./data/lastfm_users_5.csv"
 OUTPUT_USERS_DIRTY_FILE = "./data/users_dirty.json"
 OUTPUT_LISTENING_EVENTS = "./data/listening_events.csv"
 
-MAX_PAGES = 5                   # maximum number of pages per user
-MAX_EVENTS_PER_PAGE = 200       # maximum number of listening events to retrieve per page
+MAX_PAGES = 1#5                   # maximum number of pages per user
+MAX_EVENTS_PER_PAGE = 100#200       # maximum number of listening events to retrieve per page
 
 PLAYCOUNT_MINIMUM = 1000
 
@@ -98,6 +98,6 @@ if __name__ == '__main__':
         listening_events += get_listening_events(json_user["name"])
     
     with open(OUTPUT_LISTENING_EVENTS, 'w') as f:
-       writer = csv.writer(f, delimiter=',')
+       writer = csv.writer(f, delimiter='\t')
        for listening_event in listening_events:
-           writer.writerow(unicode(listening_event).encode("utf-8"))
+           writer.writerow([unicode(element).encode("utf-8") for element in listening_event])
