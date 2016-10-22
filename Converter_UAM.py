@@ -8,8 +8,8 @@ import numpy as np
 # Parameters
 LE_FILE = "./data/listening_events.csv"
 UAM_FILE = "./data/UAM.csv"                    # user-artist-matrix (UAM)
-ARTISTS_FILE = "UAM_artists.csv"        # artist names for UAM
-USERS_FILE = "UAM_users.csv"            # user names for UAM
+ARTISTS_FILE = "./data/UAM_artists.csv"        # artist names for UAM
+USERS_FILE = "./data/UAM_users.csv"            # user names for UAM
 
 
 # Main program
