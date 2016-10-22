@@ -4,15 +4,12 @@ __author__ = 'mms'
 # Load required modules
 import csv
 import numpy as np
-import Lastfm_LE_Fetcher
-
 
 # Parameters
-LE_FILE = Lastfm_LE_Fetcher.LE_FILE          # aggregated listening events, to read from
-LE_FILE = "LE_5.txt"
-UAM_FILE = "UAM_5.txt"                    # user-artist-matrix (UAM)
-ARTISTS_FILE = "UAM_artists_5.txt"        # artist names for UAM
-USERS_FILE = "UAM_users_5.txt"            # user names for UAM
+LE_FILE = "./data/listening_events.csv"
+UAM_FILE = "./data/UAM.csv"                    # user-artist-matrix (UAM)
+ARTISTS_FILE = "UAM_artists.csv"        # artist names for UAM
+USERS_FILE = "UAM_users.csv"            # user names for UAM
 
 
 # Main program

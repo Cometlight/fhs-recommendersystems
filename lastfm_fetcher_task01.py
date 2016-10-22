@@ -61,7 +61,11 @@ def get_listening_events(username):
         response = urllib.urlopen(url).read()
         json_response = json.loads(response)
         for track in json_response["recenttracks"]["track"]:
-            # Data cleansing
+            # Data cleansing: All tracks are removed which ..
+            #   .. have no date
+            #   .. have no track musicbrainz id
+            #   .. have no artist
+            #   .. have no artist musicbrainz id
             if (not "date" in track or track["date"] == "" \
                 or not "mbid" in track or track["mbid"] == "" \
                 or not "artist" in track or track["artist"] == "" \
@@ -69,16 +73,14 @@ def get_listening_events(username):
                 continue
             listening_event = []
             listening_event.append(username)
-            listening_event.append(track["artist"]["mbid"])
+            # listening_event.append(track["artist"]["mbid"])
             listening_event.append(track["artist"]["#text"])
-            listening_event.append(track["mbid"])
+            # listening_event.append(track["mbid"])
             listening_event.append(track["name"])
             listening_event.append(track["date"]["uts"])
 
             listening_events.append(listening_event)
     return listening_events
-
-
 
 # Main program
 if __name__ == '__main__':
@@ -103,7 +105,9 @@ if __name__ == '__main__':
         listening_events += get_listening_events(json_user["name"])
     
     with open(OUTPUT_LISTENING_EVENTS, 'w') as f:
-       writer = csv.writer(f, delimiter='\t')
-       for listening_event in listening_events:
-           writer.writerow([unicode(element).encode("utf-8") for element in listening_event])
+        writer = csv.writer(f, delimiter='\t', lineterminator='\n')
+        for listening_event in listening_events:
+            writer.writerow([unicode(element).encode("utf-8") for element in listening_event])
+    
+
     
