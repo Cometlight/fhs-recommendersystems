@@ -67,7 +67,8 @@ def get_listening_events(username):
             listening_event.append(track["artist"]["#text"])
             listening_event.append(track["mbid"])
             listening_event.append(track["name"])
-            listening_event.append(track["date"]["uts"])
+            if ("date" in track):
+                listening_event.append(track["date"]["uts"])
 
             listening_events.append(listening_event)
     return listening_events
@@ -76,17 +77,21 @@ def get_listening_events(username):
 
 # Main program
 if __name__ == '__main__':
-    seed_users = read_users(SEED_USERS_FILE)
-    users_dirty = []
-    for user in seed_users:
-        friends = get_friends(user)
-        users_dirty += friends
 
-    # TODO: Refactor: Filter everything at the end
-    filtered_users = filter_users(users_dirty)
+    # seed_users = read_users(SEED_USERS_FILE)
+    # users_dirty = []
+    # for user in seed_users:
+    #     friends = get_friends(user)
+    #     users_dirty += friends
+
+    # # TODO: Refactor: Filter everything at the end
+    # filtered_users = filter_users(users_dirty)
     
-    with open(OUTPUT_USERS_DIRTY_FILE, 'w') as f:
-        f.write(json.dumps(filtered_users))
+    # with open(OUTPUT_USERS_DIRTY_FILE, 'w') as f:
+    #     f.write(json.dumps(filtered_users))
+
+    with open(OUTPUT_USERS_DIRTY_FILE, 'r') as f:
+        filtered_users = json.loads(f.read())
 
     listening_events = []
     for json_user in filtered_users:
@@ -94,4 +99,5 @@ if __name__ == '__main__':
     
     with open(OUTPUT_LISTENING_EVENTS, 'w') as f:
        writer = csv.writer(f, delimiter=',')
-       writer.writerows(listening_events)
+       for listening_event in listening_events:
+           writer.writerow(unicode(listening_event).encode("utf-8"))
