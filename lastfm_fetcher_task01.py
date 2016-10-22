@@ -61,14 +61,19 @@ def get_listening_events(username):
         response = urllib.urlopen(url).read()
         json_response = json.loads(response)
         for track in json_response["recenttracks"]["track"]:
+            # Data cleansing
+            if (not "date" in track \
+                or not "mbid" in track \
+                or not "artist" in track \
+                or not "mbid" in track["artist"]):
+                continue
             listening_event = []
             listening_event.append(username)
             listening_event.append(track["artist"]["mbid"])
             listening_event.append(track["artist"]["#text"])
             listening_event.append(track["mbid"])
             listening_event.append(track["name"])
-            if ("date" in track):
-                listening_event.append(track["date"]["uts"])
+            listening_event.append(track["date"]["uts"])
 
             listening_events.append(listening_event)
     return listening_events
@@ -101,3 +106,4 @@ if __name__ == '__main__':
        writer = csv.writer(f, delimiter='\t')
        for listening_event in listening_events:
            writer.writerow([unicode(element).encode("utf-8") for element in listening_event])
+    
