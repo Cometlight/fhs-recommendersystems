@@ -62,10 +62,10 @@ def get_listening_events(username):
         json_response = json.loads(response)
         for track in json_response["recenttracks"]["track"]:
             # Data cleansing
-            if (not "date" in track \
-                or not "mbid" in track \
-                or not "artist" in track \
-                or not "mbid" in track["artist"]):
+            if (not "date" in track or track["date"] == "" \
+                or not "mbid" in track or track["mbid"] == "" \
+                or not "artist" in track or track["artist"] == "" \
+                or not "mbid" in track["artist"] or track["artist"]["mbid"] == ""):
                 continue
             listening_event = []
             listening_event.append(username)
