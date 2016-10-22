@@ -3,6 +3,7 @@ import os
 import urllib
 import csv
 import json
+import numpy as np
 
 
 # Parameters
@@ -101,13 +102,40 @@ if __name__ == '__main__':
         filtered_users = json.loads(f.read())
 
     listening_events = []
+    cleansed_users = []
+    artists_count = {}
+    cleansed_artists = []
+    cleansed_listening_events = []
+
     for json_user in filtered_users:
-        listening_events += get_listening_events(json_user["name"])
-    
+        listening_events_user = get_listening_events(json_user["name"])
+
+        leu = np.array( listening_events_user )
+        artists = np.unique(leu[:,1])
+
+        # user cleansing: add users with more than 10 unique artists
+        if len(artists) > 10:
+            listening_events += listening_events_user
+            cleansed_users.append(json_user)
+
+        # count artists
+        for artist in artists:
+            if artist in artists_count:
+                artists_count[artist] += 1
+            else:
+                artists_count[artist] = 1
+
+    # remove artists with less than 10 unique users
+    for artist, count in artists_count.iteritems():
+        if count > 1:
+            cleansed_artists.append(artist)
+
+    # remove listening items with removed artists
+    for le in listening_events:
+        if le[1] in cleansed_artists:
+            cleansed_listening_events.append(le)
+
     with open(OUTPUT_LISTENING_EVENTS, 'w') as f:
         writer = csv.writer(f, delimiter='\t', lineterminator='\n')
-        for listening_event in listening_events:
+        for listening_event in cleansed_listening_events:
             writer.writerow([unicode(element).encode("utf-8") for element in listening_event])
-    
-
-    
