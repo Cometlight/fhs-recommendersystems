@@ -7,7 +7,7 @@ import numpy as np
 
 
 # Parameters
-UAM_FILE = "./data/UAM.csv"                    # user-artist-matrix (UAM)
+UAM_FILE = "./data/UAM_100.txt"                    # user-artist-matrix (UAM)
 ARTISTS_FILE = "./data/UAM_artists.csv"        # artist names for UAM
 USERS_FILE = "./data/UAM_users.csv"            # user names for UAM
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         neighbors_idx = sort_idx[-(NEAREST_USERS+2):-2]
         for neighbor_idx in neighbors_idx:  # TODO beautify print output
             print "The closest user to user " + str(u) + " are " + str(neighbor_idx) + "."
-            print "The closest user to user " + users[u] + " is user " + users[neighbor_idx] + "."
+            # print "The closest user to user " + users[u] + " is user " + users[neighbor_idx] + "."
 
         # Get np.argsort(sim_users)l artist indices user u and her closest neighbor listened to, i.e., element with non-zero entries in UAM
         artist_idx_u = np.nonzero(UAM[u,:])                 # indices of artists user u listened to
@@ -87,9 +87,18 @@ if __name__ == '__main__':
                 if playcount > 0:
                     user_artist_count += 1
 
-            artist_score[artist] *= user_artist_count / len(neighbors_idx)
+            artists_score[artist] *= float(user_artist_count) / len(neighbors_idx)
 
-        sorted_recommended_artists = np.argsort(artists_score)
+        sorted_recommended_artists = sorted(artists_score, key=artists_score.__getitem__, reverse=True)[:10]
+
+        print sorted_recommended_artists
+
+        for artist, score in artists_score.iteritems():
+            print str(artist) + ": " + str(score)
+
+        # sorted_recommended_artists = np.argsort(artists_score)
+
+
         # Compute the set difference between u's neighbor and u,
         # i.e., artists listened to by the neighbor, but not by u.
         # These artists can be recommended to u.
