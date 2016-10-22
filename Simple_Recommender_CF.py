@@ -114,5 +114,5 @@ if __name__ == '__main__':
 #        print "Indices of the " + str(len(recommended_artists_idx)) + " recommended artists: ", recommended_artists_idx
 
         # artist names
-        artists_array = np.asarray(artists)     # convert list of artists to array of artists (for convenient indexing)
-        print "Names of the " + str(len(recommended_artists_idx)) + " recommended artists: ", artists_array[recommended_artists_idx]
+        # artists_array = np.asarray(artists)     # convert list of artists to array of artists (for convenient indexing)
+        # print "Names of the " + str(len(recommended_artists_idx)) + " recommended artists: ", artists_array[recommended_artists_idx]
