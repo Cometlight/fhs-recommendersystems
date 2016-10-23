@@ -99,18 +99,20 @@ def recommend_RB(artists_idx, no_items):
 
 # Function that implements a baseline recommender. It predicts the artists of a randomly chosen user 
 # It returns a list of recommended artist indices.
-def recommend_artists_from_random_user(user_idx, all_other_users_idx):
-    # user_idx               index from user for whom we want to recommend the artists
+def recommend_artists_from_random_user(u_aidx, all_other_users_idx, UAM):
+    # u_aidx               user artist indices
     # all_other_users_idx    indexes from where we choose a random user
     # no_items               no of items to predict
 
     # Let's predict a random user
     random_user_idx = random.sample(all_other_users_idx, 1)
 
-    random_user_artists = 
+    random_user_artists_idx = np.nonzero(UAM[random_user_idx, :])[0]
+
+    random_user_artists_idx = np.setdiff1d(random_user_artists_idx, u_aidx)
 
     # Return list of recommended artist indices
-    return random_aidx
+    return random_user_artists_idx
 
 
 # Main program
