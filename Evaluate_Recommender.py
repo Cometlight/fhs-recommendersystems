@@ -108,7 +108,7 @@ def recommend_artists_from_random_user(u_aidx, all_other_users_idx, UAM):
     # Let's predict a random user
     random_user_idx = random.sample(all_other_users_idx, 1)
 
-    random_user_artists_idx = np.nonzero(UAM[random_user_idx, :])[0]
+    random_user_artists_idx = np.nonzero(UAM[random_user_idx, :])[1]
 
     random_user_artists_idx = np.setdiff1d(random_user_artists_idx, u_aidx)
 
