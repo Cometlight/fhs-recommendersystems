@@ -71,7 +71,9 @@ def recommend_artists_from_random_user(u_aidx, all_other_users_idx, UAM, no_item
 
     random_user_artists_idx = np.setdiff1d(random_user_artists_idx, u_aidx)
 
-    # Get randomly no_items number of artists
+    # Get artists where number is no_items
+    if len(random_user_artists_idx) < no_items:
+        no_items = len(random_user_artists_idx)
     random_user_artists_idx = random.sample(random_user_artists_idx, no_items)
 
     # Return list of recommended artist indices
@@ -122,7 +124,7 @@ if __name__ == '__main__':
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
             #rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
             create_training_UAM(copy_UAM, u, train_aidx)
-            rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 1)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 1)  ###############
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 2)  ###############
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 3)  ###############
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 5)  ###############
@@ -135,14 +137,14 @@ if __name__ == '__main__':
             # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), len(test_aidx))       # select the number of recommended items as the number of items in the test set
 
             # Our baseline:
-            # all_other_users_idx = range(no_users)
-            # all_other_users_idx = np.setdiff1d(all_other_users_idx, u)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 1)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 5)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 10)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 20)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 50)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 100)
+            all_other_users_idx = range(no_users)
+            all_other_users_idx = np.setdiff1d(all_other_users_idx, u)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 1) # MAP: 0.80, MAR: 0.03, F1 Score: 0.06
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 5) # MAP: 0.68, MAR: 0.12, F1 Score: 0.21
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 10) # MAP: 0.68, MAR: 0.26, F1 Score: 0.37
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 20) # MAP: 0.67, MAR: 0.51, F1 Score: 0.58
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 50) # MAP: 0.66, MAR: 1.19, F1 Score: 0.85
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 100) # MAP: 0.69, MAR: 2.18, F1 Score: 1.05
 
 
             print "Recommended items: ", len(rec_aidx)
