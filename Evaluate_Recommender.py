@@ -97,6 +97,22 @@ def recommend_RB(artists_idx, no_items):
     return random_aidx
 
 
+# Function that implements a baseline recommender. It predicts the artists of a randomly chosen user 
+# It returns a list of recommended artist indices.
+def recommend_artists_from_random_user(user_idx, all_other_users_idx):
+    # user_idx               index from user for whom we want to recommend the artists
+    # all_other_users_idx    indexes from where we choose a random user
+    # no_items               no of items to predict
+
+    # Let's predict a random user
+    random_user_idx = random.sample(all_other_users_idx, 1)
+
+    random_user_artists = 
+
+    # Return list of recommended artist indices
+    return random_aidx
+
+
 # Main program
 if __name__ == '__main__':
 

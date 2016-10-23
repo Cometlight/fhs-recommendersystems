@@ -70,7 +70,7 @@ if __name__ == '__main__':
             artist_idx_n = np.nonzero(UAM[neighbor_idx,:])[0].tolist()
             user_artists_idx_n[neighbor_idx] = artist_idx_n
             artists += artist_idx_n
-        # artist_idx_n = np.nonzero(UAM[neighbor_idx,:])      # indices of artists user u's neighbor listened to TODO delete
+        # artist_idx_n = np.nonzero(UAM[neighbor_idx,:])     # indices of artists user u's neighbor listened to TODO delete
         artists = np.unique(artists)
         artists = np.setdiff1d(artists, artist_idx_u)
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             user_artist_count = 0
             for neighbor_idx in neighbors_idx:
                 playcount = UAM[neighbor_idx, artist]
-                score = playcount * sim_users[neighbor_idx] 
+                score = playcount * sim_users[neighbor_idx]
                 if artist in artists_score:
                     artists_score[artist] += score
                 else:
@@ -89,30 +89,14 @@ if __name__ == '__main__':
 
             artists_score[artist] *= float(user_artist_count) / len(neighbors_idx)
 
+        # calculated factors of the scores:
+            # user similarity
+            # playcount of artist
+            # number of users per artist
+        # could be further adjusted by adding additional weights
+
         sorted_recommended_artists = sorted(artists_score, key=artists_score.__getitem__, reverse=True)[:10]
 
-        print sorted_recommended_artists
 
         for artist, score in artists_score.iteritems():
             print str(artist) + ": " + str(score)
-
-        # sorted_recommended_artists = np.argsort(artists_score)
-
-
-        # Compute the set difference between u's neighbor and u,
-        # i.e., artists listened to by the neighbor, but not by u.
-        # These artists can be recommended to u.
-
-        # np.nonzero returns a tuple of arrays, so we need to take the first element only when computing the set difference
-        # recommended_artists_idx = np.setdiff1d(artist_idx_n[0], artist_idx_u[0]) TODO delete
-        # or alternatively, convert to a numpy array by ...
-#        recommended_artists_idx = np.setdiff1d(np.array(artist_idx_n), np.array(artist_idx_u))
-
-
-        # Output recommendations
-        # artist indices
-#        print "Indices of the " + str(len(recommended_artists_idx)) + " recommended artists: ", recommended_artists_idx
-
-        # artist names
-        # artists_array = np.asarray(artists)     # convert list of artists to array of artists (for convenient indexing)
-        # print "Names of the " + str(len(recommended_artists_idx)) + " recommended artists: ", artists_array[recommended_artists_idx]
