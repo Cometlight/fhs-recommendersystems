@@ -122,12 +122,12 @@ if __name__ == '__main__':
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
             #rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
             create_training_UAM(copy_UAM, u, train_aidx)
-            rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 1)  ###############
-            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 2)  ###############
-            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 3)  ###############
-            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 5)  ###############
-            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 10)  ###############
-            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 20)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 1)  # MAP: 13.79, MAR: 1.34, F1 Score: 2.44
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 2)  # MAP: 13.96, MAR: 1.52, F1 Score: 2.73
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 3)  # MAP: 14.09, MAR: 1.64, F1 Score: 2.94
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 5)  # MAP: 14.28, MAR: 1.84, F1 Score: 3.26
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 10) # MAP: 14.57, MAR: 2.13, F1 Score: 3.72
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 20) # MAP: 14.75, MAR: 2.3, F1 Score: 3.98
 #            print "Recommended items: ", len(rec_aidx)
 
             # For random recommendation, exclude items that the user already knows, i.e. the ones in the training set
