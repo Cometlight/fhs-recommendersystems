@@ -32,7 +32,7 @@ def read_from_file(filename):
 # Function that implements a CF recommender. It takes as input the UAM, metadata (artists and users),
 # the index of the seed user (to make predictions for) and the indices of the seed user's training artists.
 # It returns a list of recommended artist indices
-def recommend_CF(UAM, seed_uidx, seed_aidx_train):
+def create_training_UAM(UAM, seed_uidx, seed_aidx_train):
     # UAM               user-artist-matrix
     # seed_uidx         user index of seed user
     # seed_aidx_train   indices in UAM of training artists for seed user
@@ -52,38 +52,6 @@ def recommend_CF(UAM, seed_uidx, seed_aidx_train):
     # Perform sum-to-1 normalization
     UAM[seed_uidx, :] = UAM[seed_uidx, :] / np.sum(UAM[seed_uidx, :])
 
-    # Compute similarities as inner product between pc_vec of user and all users via UAM (assuming that UAM is normalized)
-    sim_users = np.inner(pc_vec, UAM)  # similarities between u and other users
-
-    # Alternatively, compute cosine similarities as inverse cosine distance between pc_vec of user and all users via UAM (assuming that UAM is normalized)
-#    sim_users = np.zeros(shape=(UAM.shape[0]), dtype=np.float32)
-#    for u in range(0, UAM.shape[0]):
-#        sim_users[u] = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
-
-    # Sort similarities to all others
-    sort_idx = np.argsort(sim_users)  # sort in ascending order
-
-    # Select the closest neighbor to seed user (which is the last but one; last one is user u herself!)
-    neighbor_idx = sort_idx[-2:-1][0]
-#    print "The closest user to user " + str(seed_uidx) + " is " + str(neighbor_idx) + "."
-#    print "The closest user to user " + users[seed_uidx] + " is user " + users[neighbor_idx] + "."
-
-    # Get all artist indices the seed user and her closest neighbor listened to, i.e., element with non-zero entries in UAM
-    artist_idx_u = seed_aidx_train                      # indices of artists in training set user
-    artist_idx_n = np.nonzero(UAM[neighbor_idx, :])     # indices of artists user u's neighbor listened to
-
-    # Compute the set difference between seed user's neighbor and seed user,
-    # i.e., artists listened to by the neighbor, but not by seed user.
-    # These artists are recommended to seed user.
-
-    # np.nonzero returns a tuple of arrays, so we need to take the first element only when computing the set difference
-    recommended_artists_idx = np.setdiff1d(artist_idx_n[0], artist_idx_u)
-    # or alternatively, convert to a numpy array by ...
-    # artist_idx_np.setdiff1d(np.array(artist_idx_n), np.array(artist_idx_u))
-
-    # Return list of recommended artist indices
-    return recommended_artists_idx
-
 
 # Function that implements dumb random recommender. It predicts a number of randomly chosen items.
 # It returns a list of recommended artist indices.
@@ -100,7 +68,7 @@ def recommend_RB(artists_idx, no_items):
 
 # Function that implements a baseline recommender. It predicts the artists of a randomly chosen user 
 # It returns a list of recommended artist indices.
-def recommend_artists_from_random_user(u_aidx, all_other_users_idx, UAM):
+def recommend_artists_from_random_user(u_aidx, all_other_users_idx, UAM, no_items):
     # u_aidx               user artist indices
     # all_other_users_idx    indexes from where we choose a random user
     # no_items               no of items to predict
@@ -111,6 +79,8 @@ def recommend_artists_from_random_user(u_aidx, all_other_users_idx, UAM):
     random_user_artists_idx = np.nonzero(UAM[random_user_idx, :])[1]
 
     random_user_artists_idx = np.setdiff1d(random_user_artists_idx, u_aidx)
+
+    random_user_artists_idx = random.sample(random_user_artists_idx, no_items)
 
     # Return list of recommended artist indices
     return random_user_artists_idx
@@ -160,7 +130,13 @@ if __name__ == '__main__':
             # Call recommend function
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
             #rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
-            #rec_aidx = simple_recommender_cf(u, UAM, 100, 10)  ###############
+            create_training_UAM(copy_UAM, u, train_aidx)
+            rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 1)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 2)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 3)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 5)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 10)  ###############
+            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 20)  ###############
 #            print "Recommended items: ", len(rec_aidx)
 
             # For random recommendation, exclude items that the user already knows, i.e. the ones in the training set
@@ -168,9 +144,14 @@ if __name__ == '__main__':
             # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), len(test_aidx))       # select the number of recommended items as the number of items in the test set
 
             # Our baseline:
-            all_other_users_idx = range(no_users)
-            all_other_users_idx = np.setdiff1d(all_other_users_idx, u)
-            rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM)
+            # all_other_users_idx = range(no_users)
+            # all_other_users_idx = np.setdiff1d(all_other_users_idx, u)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 1)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 5)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 10)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 20)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 50)
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM, 100)
 
 
             print "Recommended items: ", len(rec_aidx)
@@ -211,4 +192,6 @@ if __name__ == '__main__':
             fold += 1
 
     # Output mean average precision and recall
-    print ("\nMAP: %.2f, MAR: %.2f" % (avg_prec, avg_rec))
+    f1_score = 2 * ( (avg_prec * avg_rec) / (avg_prec + avg_rec))
+
+    print ("\nMAP: %.2f, MAR: %.2f, F1 Score: %.2f" % (avg_prec, avg_rec, f1_score))
