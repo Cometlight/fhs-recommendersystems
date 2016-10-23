@@ -6,13 +6,14 @@ import csv
 import numpy as np
 from sklearn import cross_validation  # machine learning & evaluation module
 import random
+from Simple_Recommender_CF import simple_recommender_cf
 
 # Parameters
-UAM_FILE = "UAM_5.txt"                # user-artist-matrix (UAM)
-ARTISTS_FILE = "UAM_artists_5.txt"    # artist names for UAM
-USERS_FILE = "UAM_users_5.txt"        # user names for UAM
+UAM_FILE = "./data/C1ku_UAM.txt"                    # user-artist-matrix (UAM)
+ARTISTS_FILE = "./data/C1ku_idx_artists.txt"        # artist names for UAM
+USERS_FILE = "./data/C1ku_idx_users.txt"            # user names for UAM
 
-NF = 5              # number of folds to perform in cross-validation
+NF = 10              # number of folds to perform in cross-validation TODO 10 folds
 
 
 # Function to read metadata (users or artists)
@@ -128,15 +129,29 @@ if __name__ == '__main__':
     # Load UAM
     UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
 
+    
+
     # For all users in our data (UAM)
     no_users = UAM.shape[0]
+
+    no_sparse_users = 0
+    for user in range(0, no_users):
+        u_aidx = np.nonzero(UAM[user, :])[0]
+        if len(u_aidx) < NF:
+            no_sparse_users += 1
+
     for u in range(0, no_users):
 
         # Get seed user's artists listened to
         u_aidx = np.nonzero(UAM[u, :])[0]
+        print "nr. of artists: " + str(len(u_aidx))
 
         # Split user's artists into train and test set for cross-fold (CV) validation
         fold = 0
+
+        if len(u_aidx) < NF:
+            # ignore sparse users
+            continue
         kf = cross_validation.KFold(len(u_aidx), n_folds=NF)  # create folds (splits) for 5-fold CV
         for train_aidx, test_aidx in kf:  # for all folds
             # Show progress
@@ -144,12 +159,19 @@ if __name__ == '__main__':
                 len(train_aidx)) + ", Test items: " + str(len(test_aidx)),      # the comma at the end avoids line break
             # Call recommend function
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
-            rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
+            #rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
+            #rec_aidx = simple_recommender_cf(u, UAM, 100, 10)  ###############
 #            print "Recommended items: ", len(rec_aidx)
 
             # For random recommendation, exclude items that the user already knows, i.e. the ones in the training set
-#            all_aidx = range(0, UAM.shape[1])
-#            rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), len(test_aidx))       # select the number of recommended items as the number of items in the test set
+            # all_aidx = range(0, UAM.shape[1])
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), len(test_aidx))       # select the number of recommended items as the number of items in the test set
+
+            # Our baseline:
+            all_other_users_idx = range(no_users)
+            all_other_users_idx = np.setdiff1d(all_other_users_idx, u)
+            rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, UAM)
+
 
             print "Recommended items: ", len(rec_aidx)
 
@@ -179,8 +201,8 @@ if __name__ == '__main__':
 
 
             # add precision and recall for current user and fold to aggregate variables
-            avg_prec += prec / (NF * no_users)
-            avg_rec += rec / (NF * no_users)
+            avg_prec += prec / (NF * (no_users - no_sparse_users))
+            avg_rec += rec / (NF * (no_users - no_sparse_users))
 
             # Output precision and recall of current fold
             print ("\tPrecision: %.2f, Recall:  %.2f" % (prec, rec))

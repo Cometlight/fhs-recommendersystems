@@ -8,8 +8,8 @@ import numpy as np
 
 # Parameters
 UAM_FILE = "./data/UAM_100.txt"                    # user-artist-matrix (UAM)
-ARTISTS_FILE = "./data/UAM_artists.csv"        # artist names for UAM
-USERS_FILE = "./data/UAM_users.csv"            # user names for UAM
+ARTISTS_FILE = "./data/UAM_artists_100.txt"        # artist names for UAM
+USERS_FILE = "./data/UAM_users_100.txt"            # user names for UAM
 
 NEAREST_USERS = 3
 MAX_ITEMS_TO_PREDICT = 10
@@ -25,7 +25,7 @@ def read_from_file(filename):
             data.append(item)
     return data
 
-def simple_recommender_cv(user, UAM, max_items_to_predict, nearest_users_to_consider):
+def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_consider):
     # user .. the user for whom we want to predict artists for
     # UAM .. user artist matrix
     # max_items_to_predict .. how many artists shall be predicted
@@ -109,6 +109,10 @@ if __name__ == '__main__':
     for user in range(0, UAM.shape[0]):
         # get playcount vector for current user u
         print "Next user recommendations: "
+        user_most_listened_to_artists = np.argsort(UAM[user,:])[::-1]
+        for i in range(0, 10):
+            print str(i+1) + ". rank: " + artists[user_most_listened_to_artists[i]]
+        print "- - - - - - - "
         recommended_artists_idx = simple_recommender_cv(user, UAM, MAX_ITEMS_TO_PREDICT, NEAREST_USERS)
         for i in range(0, len(recommended_artists_idx)):
             print str(i+1) + ". rank: " + artists[recommended_artists_idx[i]]
