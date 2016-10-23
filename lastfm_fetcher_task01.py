@@ -11,12 +11,12 @@ LASTFM_API_KEY = "af642fd2ce0b0e8eb99519a187657101"
 LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/"
 LASTFM_OUTPUT_FORMAT = "json"
 
-SEED_USERS_FILE = "./data/lastfm_users_5.csv"
+SEED_USERS_FILE = "./data/lastfm_users_100.csv"
 OUTPUT_USERS_DIRTY_FILE = "./data/users_dirty.json"
 OUTPUT_LISTENING_EVENTS = "./data/listening_events.csv"
 
-MAX_PAGES = 1#5                   # maximum number of pages per user
-MAX_EVENTS_PER_PAGE = 100#200       # maximum number of listening events to retrieve per page
+MAX_PAGES = 5                   # maximum number of pages per user
+MAX_EVENTS_PER_PAGE = 200       # maximum number of listening events to retrieve per page
 
 PLAYCOUNT_MINIMUM = 1000
 
@@ -86,17 +86,18 @@ def get_listening_events(username):
 # Main program
 if __name__ == '__main__':
 
-    # seed_users = read_users(SEED_USERS_FILE)
-    # users_dirty = []
-    # for user in seed_users:
-    #     friends = get_friends(user)
-    #     users_dirty += friends
+    seed_users = read_users(SEED_USERS_FILE)
+    users_dirty = []
 
-    # # TODO: Refactor: Filter everything at the end
-    # filtered_users = filter_users(users_dirty)
+    for user in seed_users:
+        friends = get_friends(user)
+        users_dirty += friends
+
+    # TODO: Refactor: Filter everything at the end
+    filtered_users = filter_users(users_dirty)
     
-    # with open(OUTPUT_USERS_DIRTY_FILE, 'w') as f:
-    #     f.write(json.dumps(filtered_users))
+    with open(OUTPUT_USERS_DIRTY_FILE, 'w') as f:
+        f.write(json.dumps(filtered_users))
 
     with open(OUTPUT_USERS_DIRTY_FILE, 'r') as f:
         filtered_users = json.loads(f.read())
@@ -110,30 +111,39 @@ if __name__ == '__main__':
     for json_user in filtered_users:
         listening_events_user = get_listening_events(json_user["name"])
 
-        leu = np.array( listening_events_user )
-        artists = np.unique(leu[:,1])
+        try:
+            leu = np.array( listening_events_user )
+            artists = np.unique(leu[:,1])
 
-        # user cleansing: add users with more than 10 unique artists
-        if len(artists) > 10:
-            listening_events += listening_events_user
-            cleansed_users.append(json_user)
+            # user cleansing: add users with more than 10 unique artists
+            if len(artists) > 10:
+                listening_events += listening_events_user
+                cleansed_users.append(json_user)
 
-        # count artists
-        for artist in artists:
-            if artist in artists_count:
-                artists_count[artist] += 1
-            else:
-                artists_count[artist] = 1
+            # count artists
+            for artist in artists:
+                if artist in artists_count:
+                    artists_count[artist] += 1
+                else:
+                    artists_count[artist] = 1
+        except IndexError:
+            print "IndexError:"
+            print leu
+            continue
+        except:
+            print "UnexpectedError"
+            continue
 
     # remove artists with less than 10 unique users
     for artist, count in artists_count.iteritems():
-        if count > 1:
+        if count > 10:
             cleansed_artists.append(artist)
 
     # remove listening items with removed artists
     for le in listening_events:
         if le[1] in cleansed_artists:
             cleansed_listening_events.append(le)
+
 
     with open(OUTPUT_LISTENING_EVENTS, 'w') as f:
         writer = csv.writer(f, delimiter='\t', lineterminator='\n')

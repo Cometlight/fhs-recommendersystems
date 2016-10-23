@@ -87,7 +87,7 @@ if __name__ == '__main__':
                 if playcount > 0:
                     user_artist_count += 1
 
-            artist_score[artist] *= user_artist_count / len(neighbors_idx)
+            artists_score[artist] *= user_artist_count / len(neighbors_idx)
 
         sorted_recommended_artists = np.argsort(artists_score)
         # Compute the set difference between u's neighbor and u,
