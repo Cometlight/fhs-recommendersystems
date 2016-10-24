@@ -1,0 +1,68 @@
+# CF Recommender
+
+cf_k_neighbours <- c(1, 2, 3, 5, 10, 20)
+cf_MAP <- c(13.79, 13.96, 14.09, 14.28, 14.57, 14.75)
+cf_MAR <- c(1.34, 1.52, 1.64, 1.84, 2.13, 2.3)
+cf_F1 <- c(2.44, 2.73, 2.94, 3.26, 3.72, 3.98)
+
+plot(cf_k_neighbours, cf_MAP, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="[%]", col="red", ylim=c(0,15), main="CF Recommender")
+par(new=TRUE)
+plot(cf_k_neighbours, cf_MAR, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="blue", ylim=c(0,15))
+par(new=TRUE)
+plot(cf_k_neighbours, cf_F1, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,15))
+axis(1, at=cf_k_neighbours, labels=cf_k_neighbours)
+axis(2, at=seq(0,15,by=2.5))
+grid()
+legend(17, 10, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
+text(cf_k_neighbours, cf_MAP-0.5, cf_MAP)
+text(cf_k_neighbours, cf_MAR-0.5, cf_MAR)
+text(cf_k_neighbours, cf_F1-0.5, cf_F1)
+par(new=FALSE)
+
+
+# Random Baseline (Ours)
+rb_n_artists <- c(1, 5, 10, 20, 50, 100)
+rb_MAP <- c(0.8, 0.68, 0.68, 0.67, 0.66, 0.69)
+rb_MAR <- c(0.03, 0.12, 0.26, 0.51, 1.19, 2.18)
+rb_F1 <- c(0.06, 0.21, 0.37, 0.58, 0.85, 1.05)
+
+plot(rb_n_artists, rb_MAP, type="b", xaxt="n", yaxt="n", xlab="number of artists predicted", ylab="[%]", col="red", ylim=c(0,2.5), main="Random Baseline (random user picking)")
+par(new=TRUE)
+plot(rb_n_artists, rb_MAR, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="blue", ylim=c(0,2.5))
+par(new=TRUE)
+plot(rb_n_artists, rb_F1, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,2.5))
+axis(1, at=rb_n_artists, labels=rb_n_artists)
+axis(2, at=seq(0,15,by=2.5))
+grid()
+legend(3, 2, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
+par(new=FALSE)
+
+# Random Baseline (his)
+
+rb2_n_artists <- c(1, 5, 10, 20, 50, 100)
+rb2_MAP <- c(0.28, 0.26, 0.31, 0.35, 0.33, 0.32)
+rb2_MAR <- c(0.01, 0.04, 0.1, 0.23, 0.52, 1.02)
+rb2_F1 <- c(0.02, 0.07, 0.15, 0.28, 0.4, 0.48)
+
+plot(rb2_n_artists, rb2_MAP, type="b", xaxt="n", yaxt="n", xlab="number of artists predicted", ylab="[%]", col="red", ylim=c(0,1.5), main="Random Baseline")
+par(new=TRUE)
+plot(rb2_n_artists, rb2_MAR, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="blue", ylim=c(0,1.5))
+par(new=TRUE)
+plot(rb2_n_artists, rb2_F1, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,1.5))
+axis(1, at=rb2_n_artists, labels=rb2_n_artists)
+axis(2, at=seq(0,1.5,by=0.25))
+grid()
+legend(1, 1, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
+par(new=FALSE)
+
+
+# Compare results
+plot(cf_MAR, cf_MAP, type="b", xaxt="n", yaxt="n", xlab="MAR [%]", ylab="MAP [%]", col="red", ylim=c(0,15), xlim=c(0,3), main="Comparison of different Recommender Systems")
+par(new=TRUE)
+plot(rb_MAR, rb_MAP, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="blue", ylim=c(0,15), xlim=c(0,3))
+par(new=TRUE)
+plot(rb2_MAR, rb2_MAP, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,15), xlim=c(0,3))
+axis(1, at=seq(0, 3, 0.2))
+axis(2, at=seq(0,15,by=2.5))
+grid()
+legend(2.5, 9, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
