@@ -104,10 +104,8 @@ if __name__ == '__main__':
             no_sparse_users += 1
 
     for u in range(0, no_users):
-
         # Get seed user's artists listened to
         u_aidx = np.nonzero(UAM[u, :])[0]
-        print "nr. of artists: " + str(len(u_aidx))
 
         # Split user's artists into train and test set for cross-fold (CV) validation
         fold = 0
@@ -130,22 +128,27 @@ if __name__ == '__main__':
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 3)  # MAP: 14.09, MAR: 1.64, F1 Score: 2.94
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 5)  # MAP: 14.28, MAR: 1.84, F1 Score: 3.26
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 10) # MAP: 14.57, MAR: 2.13, F1 Score: 3.72
-            # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 20) # MAP: 14.75, MAR: 2.3, F1 Score: 3.98
-
-#            print "Recommended items: ", len(rec_aidx)
+            rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 20) # MAP: 14.75, MAR: 2.3, F1 Score: 3.98
 
             # For random recommendation, exclude items that the user already knows, i.e. the ones in the training set
-            # all_aidx = range(0, UAM.shape[1])
+            all_aidx = range(0, UAM.shape[1])
             # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), len(test_aidx))       # select the number of recommended items as the number of items in the test set
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), 1)    # MAP: 0.28, MAR: 0.01, F1 Score: 0.02
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), 5)    # MAP: 0.26, MAR: 0.04, F1 Score: 0.07
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), 10)   # MAP: 0.31, MAR: 0.1, F1 Score: 0.15
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), 20)   # MAP: 0.35, MAR: 0.23, F1 Score: 0.28
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), 50)   # MAP: 0.33, MAR: 0.52, F1 Score: 0.4
+            # rec_aidx = recommend_RB(np.setdiff1d(all_aidx, u_aidx[train_aidx]), 100)  # MAP: 0.32, MAR: 1.02, F1 Score: 0.48
 
-            # Our baseline:
+
+            # Our random baseline:
             all_other_users_idx = range(no_users)
             all_other_users_idx = np.setdiff1d(all_other_users_idx, u)
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 1) # MAP: 0.80, MAR: 0.03, F1 Score: 0.06
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 5) # MAP: 0.68, MAR: 0.12, F1 Score: 0.21
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 10) # MAP: 0.68, MAR: 0.26, F1 Score: 0.37
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 20) # MAP: 0.67, MAR: 0.51, F1 Score: 0.58
-            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 50) # MAP: 0.66, MAR: 1.19, F1 Score: 0.85
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 1)   # MAP: 0.80, MAR: 0.03, F1 Score: 0.06
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 5)   # MAP: 0.68, MAR: 0.12, F1 Score: 0.21
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 10)  # MAP: 0.68, MAR: 0.26, F1 Score: 0.37
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 20)  # MAP: 0.67, MAR: 0.51, F1 Score: 0.58
+            # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 50)  # MAP: 0.66, MAR: 1.19, F1 Score: 0.85
             # rec_aidx = recommend_artists_from_random_user(train_aidx, all_other_users_idx, copy_UAM, 100) # MAP: 0.69, MAR: 2.18, F1 Score: 1.05
 
 
