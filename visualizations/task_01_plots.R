@@ -65,4 +65,4 @@ plot(rb2_MAR, rb2_MAP, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="dark
 axis(1, at=seq(0, 3, 0.2))
 axis(2, at=seq(0,15,by=2.5))
 grid()
-legend(2.5, 9, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
+legend(1.85, 9, c("Collaborative Filtering", "Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
