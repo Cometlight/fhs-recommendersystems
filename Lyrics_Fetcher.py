@@ -8,7 +8,7 @@ LASTFM_ARTIST_URL = "http://www.last.fm/music/{}/+tracks" # for fetching of top 
 WIKI_ARTIST_URL = "http://lyrics.wikia.com/wiki/{}:{}" # for fetching of lyrics of songs. {} -> artist, {} -> song name
 NUMBER_OF_SONGS_PER_ARTIST = 10
 
-ARTISTS_FILE = "./data/UAM_artists.csv"
+ARTISTS_FILE = "./data/C1ku_artists.csv"
 OUTPUT_DIRECTORY = "./data/crawls_lyrics/"
 
 def get_top_songs(artist, count):

@@ -2,8 +2,10 @@ import os
 import numpy as np
 import scipy.spatial.distance as scidist      # import distance computation module from scipy package
 import Helper_IO as io
+import langdetect
+import snowballstemmer
 
-ARTISTS_FILE = "./data/UAM_artists.csv"
+ARTISTS_FILE = "./data/C1ku_artists.csv"
 INPUT_LYRICS_DIRECTORY = "./data/crawls_lyrics/"
 OUTPUT_TFIDF_FILE = "./data/tfidfs.txt"            # file to store term weights
 OUTPUT_TERMS_FILE = "./data/terms.txt"             # file to store list of terms (for easy interpretation of term weights)
@@ -11,6 +13,50 @@ OUTPUT_SIMS_FILE = "./data/AAM.txt"               # file to store similarities b
 
 # Stop words used by Google
 STOP_WORDS = ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"]
+
+# This is needed, because langdetect returns iso codes, but snowballstemmer needs the full name as a parameter
+language_iso_map = {
+    'da':'danish',
+    'nl':'dutch',
+    'en':'english',
+    'fi':'finnish',
+    'fr':'french',
+    'de':'german',
+    'hu':'hungarian',
+    'it':'italian',
+    'no':'norwegian',
+    'pt':'portuguese',
+    'ro':'romanian',
+    'ru':'russian',
+    'es':'spanish',
+    'sv':'swedish',
+    'tr':'turkish'
+}
+
+def do_stemming(words, language_iso_code):
+    # Stems the words, e.g. "run", "running", "ran" are mapped to "run"
+    # words .. the words to stem
+    # language_iso_code .. the words' language's iso code
+    # return .. the stemmed words, if the language is supported
+    if not words:
+        return words
+    if language_iso_code not in language_iso_map: # check if language is supported
+        return words
+    
+    language_name = language_iso_map[language_iso_code]
+    stemmer = snowballstemmer.stemmer(language_name)
+    stemmed_words = stemmer.stemWords(words)
+    return stemmed_words
+
+def detect_language(terms):
+    # terms .. a list of the terms to analyze
+    # return .. the language iso code as a string, or empty string if not detected
+    if not terms:
+        return ""
+    langdetect.DetectorFactory.seed = 0 # We want to enforce consistent results
+    terms_concatenated = " ".join(terms)
+    lang_iso = langdetect.detect(terms_concatenated)
+    return lang_iso
 
 if __name__ == '__main__':
     text_content = {} # dictionary to hold tokenized lyrics of each artist
@@ -34,13 +80,21 @@ if __name__ == '__main__':
 
             tokens_filtered_stopped = filter(lambda t: t not in STOP_WORDS, tokens_alnum) # Remove words from the stop word list
 
-            text_content[i] = tokens_filtered_stopped
-            print "File " + file_name + " --- total tokens: " + str(len(tokens)) + "; after filtering and stopping: " + str(len(tokens_filtered_stopped))
+            language = detect_language(tokens_filtered_stopped)
+            tokens_stemmed = do_stemming(tokens_filtered_stopped, language)
+
+            text_content[i] = tokens_stemmed
+            print "File '" + file_name + \
+                "': total tokens: " + str(len(tokens)) + \
+                " | after filtering: " + str(len(tokens_alnum)) + \
+                " | after stopping: " + str(len(tokens_filtered_stopped)) + \
+                " | after stemming: " + str(len(tokens_stemmed)) # of course tokens are only modified, but not removed through stemming
+            # print "File " + file_name + " --- total tokens: " + str(len(tokens)) + "; after filtering, stopping, and stemming: " + str(len(tokens_filtered_stopped))
         else:
             print "{}'s lyrics file ({}) does not exist! Skipping..".format(artists[i], file_name)
     
     # Start computing term weights, in particular, document frequencies and term frequencies.
-
+    
     # Iterate over all (key, value) tuples from dictionary just created to determine document frequency (DF) of all terms
     for aid, terms in text_content.items():
         # convert list of terms to set of terms ("uniquify" words for each artist/document)
@@ -56,11 +110,30 @@ if __name__ == '__main__':
     no_terms = len(terms_df)
     print "Number of artists in corpus: " + str(no_artists)
     print "Number of terms in corpus: " + str(no_terms)
-
+    # most_used_terms = sorted(terms_df.items(), key=operator.itemgetter(1)).reverse()[:10]
+    most_used_terms = list(reversed(sorted(terms_df, key=terms_df.get)))
+    print "Most used terms: "
+    for term in most_used_terms[:10]:
+        print "\t{}: {}".format(term, terms_df[term])
+    
     # You may want (or need) to perform some kind of dimensionality reduction here, e.g., filtering all terms
     # with a very small document frequency.
     # ...
-    # TODO
+    # TODO I'm still working on this.. - Daniel
+    # for term in terms_df.keys():
+    #     occurance_percentage = terms_df[term] / no_artists
+    #     if occurance_percentage < 0.05:
+    #         del terms_df[term]
+    #         for artist, tokens in text_content.items():
+    #             # text_content[artist] = filter(lambda t: return t not term, tokens)
+    #             text_content[artist] = [token for token in tokens if token not term]
+    #         # { k:v for k, v in text_content.items() if term in v}
+    #         # del text_content[term]
+    #         print "Removed " + term + ", perc: " + str(occurance_percentage)
+    #     else:
+    #         print "Not removed: " + term + ": " + str(occurance_percentage)
+    
+    # quit()
 
 
     # Dictionary is unordered, so we store all terms in a list to fix their order, before computing the TF-IDF matrix
