@@ -2,7 +2,7 @@ import urllib
 from bs4 import BeautifulSoup
 import requests
 import os
-import csv
+import Helper_IO as io
 
 LASTFM_ARTIST_URL = "http://www.last.fm/music/{}/+tracks" # for fetching of top songs. {} -> artist
 WIKI_ARTIST_URL = "http://lyrics.wikia.com/wiki/{}:{}" # for fetching of lyrics of songs. {} -> artist, {} -> song name
@@ -10,15 +10,6 @@ NUMBER_OF_SONGS_PER_ARTIST = 10
 
 ARTISTS_FILE = "./data/UAM_artists.csv"
 OUTPUT_DIRECTORY = "./data/crawls_lyrics/"
-
-def read_file(fn):
-    items = []
-    with open(fn, 'r') as f:
-        reader = csv.reader(f, delimiter='\t')
-        reader.next()                     # in case we have a header
-        for row in reader:
-            items.append(row[0])
-    return items
 
 def get_top_songs(artist, count):
     # artist .. the artist's name as a string
@@ -64,7 +55,7 @@ if __name__ == '__main__':
         os.makedirs(OUTPUT_DIRECTORY)
 
     # Read artist list
-    artists = read_file(ARTISTS_FILE)
+    artists = io.read_file(ARTISTS_FILE)
 
     # Let's fetch the artists' lyrics
     for i in range(0, len(artists)):
