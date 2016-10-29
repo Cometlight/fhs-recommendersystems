@@ -11,6 +11,9 @@ OUTPUT_TFIDF_FILE = "./data/tfidfs.txt"            # file to store term weights
 OUTPUT_TERMS_FILE = "./data/terms.txt"             # file to store list of terms (for easy interpretation of term weights)
 OUTPUT_SIMS_FILE = "./data/AAM.txt"               # file to store similarities between items
 
+MIN_TERM_DF_PERCENTAGE = 0.03 # E.g. 0.05 means, that a term must occur in at least 5% of all artists, otherwise it is discarded TODO find good value
+MAX_TERM_DF_PERCENTAGE = 0.97 # E.g. 0.95 means, that a term must occur in maximal 95% of all artists, otherwise it is discarded TODO find good value
+
 # Stop words used by Google
 STOP_WORDS = ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"]
 
@@ -119,22 +122,15 @@ if __name__ == '__main__':
     # You may want (or need) to perform some kind of dimensionality reduction here, e.g., filtering all terms
     # with a very small document frequency.
     # ...
-    # TODO I'm still working on this.. - Daniel
-    # for term in terms_df.keys():
-    #     occurance_percentage = terms_df[term] / no_artists
-    #     if occurance_percentage < 0.05:
-    #         del terms_df[term]
-    #         for artist, tokens in text_content.items():
-    #             # text_content[artist] = filter(lambda t: return t not term, tokens)
-    #             text_content[artist] = [token for token in tokens if token not term]
-    #         # { k:v for k, v in text_content.items() if term in v}
-    #         # del text_content[term]
-    #         print "Removed " + term + ", perc: " + str(occurance_percentage)
-    #     else:
-    #         print "Not removed: " + term + ": " + str(occurance_percentage)
-    
-    # quit()
-
+    terms_low_occurance = filter(lambda t: terms_df[t]/(no_artists*1.0) < MIN_TERM_DF_PERCENTAGE, terms_df.keys())
+    terms_high_occurance = filter(lambda t: terms_df[t]/(no_artists*1.0) > MAX_TERM_DF_PERCENTAGE, terms_df.keys())
+    terms_to_delete = set(terms_low_occurance).union(terms_high_occurance)
+    for term in terms_to_delete:
+        terms_df.pop(term, None)
+        for artist, tokens in text_content.items():
+            text_content[artist] = filter(lambda t: t != term, text_content[artist])
+    print "Removed {} terms ({} with low, {} with high occurance); {} terms remain.".format( \
+        len(terms_to_delete), len(terms_low_occurance), len(terms_high_occurance), len(terms_df.keys()))
 
     # Dictionary is unordered, so we store all terms in a list to fix their order, before computing the TF-IDF matrix
     for term in terms_df.keys():
@@ -144,7 +140,7 @@ if __name__ == '__main__':
     idf = np.zeros(no_terms, dtype=np.float32)
     for i in range(0, no_terms):
         idf[i] = np.log(no_artists / terms_df[term_list[i]])
-        print term_list[i] + ": " + str(idf[i])
+        # print term_list[i] + ": " + str(idf[i])
 
     # Initialize matrix to hold term frequencies (and eventually TF-IDF weights) for all artists for which we fetched HTML content
     tfidf = np.zeros(shape=(no_artists, no_terms), dtype=np.float32)
