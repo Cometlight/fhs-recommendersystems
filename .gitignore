@@ -93,3 +93,4 @@ ENV/
 
 # non python specific files and folders
 data/crawls_lyrics
+data/C1ku_AAM.txt
