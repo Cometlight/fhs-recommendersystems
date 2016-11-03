@@ -72,9 +72,11 @@ def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_cons
         artists_score[artist] *= float(user_artist_count) / len(neighbors_idx)
 
     # Sort the artists depending on their calculated scores
-    sorted_recommended_artists = sorted(artists_score, key=artists_score.__getitem__, reverse=True)[:max_items_to_predict]
     
-    return sorted_recommended_artists
+    sorted_recommended_artists = sorted([(key,value) for (key,value) in artists_score.items()], reverse=False)[:max_items_to_predict]
+    dict_rec_aidx = dict(sorted_rec_aidx)
+
+    return dict_rec_aidx
 
 # Main program
 if __name__ == '__main__':
