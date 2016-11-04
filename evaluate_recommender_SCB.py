@@ -18,8 +18,8 @@ import Simple_Recommender_CF
 UAM_FILE = "./data/C1ku_UAM.txt"                # user-artist-matrix (UAM)
 ARTISTS_FILE = "UAM_artists.txt"    # artist names for UAM
 USERS_FILE = "UAM_users.txt"        # user names for UAM
-AAM_FILE = "./data/C1ku_AAM.txt"                # artist-artist similarity matrix (AAM)
-METHOD = "CF"                       # recommendation method
+AAM_FILE = "./data/AAM.txt"                # artist-artist similarity matrix (AAM)
+METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
@@ -305,11 +305,14 @@ if __name__ == '__main__':
     #artists = read_from_file(ARTISTS_FILE)
     #users = read_from_file(USERS_FILE)
     # Load UAM
+    print "Loading UAM... ",
     UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
-
+    print "Done."
     # Load AAM
+    print "Loading AAM... ",
     AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
-
+    print "Done."
+    
     if False:
         METHOD = "HR_SCB"
         print METHOD
