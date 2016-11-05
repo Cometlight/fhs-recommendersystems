@@ -18,12 +18,12 @@ import Simple_Recommender_CF
 UAM_FILE = "./data/C1ku_UAM.txt"                # user-artist-matrix (UAM)
 ARTISTS_FILE = "UAM_artists.txt"    # artist names for UAM
 USERS_FILE = "UAM_users.txt"        # user names for UAM
-AAM_FILE = "./data/AAM.txt"                # artist-artist similarity matrix (AAM)
+AAM_FILE = "./data/C1ku_AAM.txt"                # artist-artist similarity matrix (AAM)
 METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
-NF = 2              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 50
+NF = 10              # number of folds to perform in cross-validation
+NO_RECOMMENDED_ARTISTS = 100
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -114,7 +114,7 @@ def recommend_CB(AAM, seed_aidx_train, K, no_recommendations):
     # K                   number of nearest neighbors (artists) to consider for each seed artist
     # no_recommendations  max number of recommended artists; no_recommendations <= K
 
-    if no_recommendations <= K:
+    if no_recommendations > K:
         print "K must be greater than (or equal to) no_recommendations"
         return
 
@@ -216,7 +216,7 @@ def run():
     UAM_normalized = UAM / artist_sum_copy
 
     # For all users in our data (UAM_normalized)
-    no_users = 20 #UAM_normalized.shape[0]
+    no_users = UAM_normalized.shape[0]
     no_artists = UAM_normalized.shape[1]
     for u in range(0, no_users):
 
@@ -225,6 +225,9 @@ def run():
 
         # Split user's artists into train and test set for cross-fold (CV) validation
         fold = 0
+        if len(u_aidx) < NF:
+            # ignore sparse users
+            continue
         kf = cross_validation.KFold(len(u_aidx), n_folds=NF)  # create folds (splits) for 5-fold CV
         for train_aidx, test_aidx in kf:  # for all folds
             # Show progress
@@ -260,7 +263,7 @@ def run():
 
                 dict_rec_aidx = {}
 
-                # TODO ADD score normalization for both scores
+                
                 for aidx in dict_rec_aidx_CB.keys():
                     if aidx in scores_fused:
                         scores_fused[aidx] += weight_CB * dict_rec_aidx_CB[aidx]**2
@@ -355,7 +358,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75:  
         # NO_RECOMMENDED_ARTISTS = 100: 
 
-    if False:
+    if True:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
@@ -369,7 +372,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75: DANIEL
         # NO_RECOMMENDED_ARTISTS = 100: STEPHAN
 
-    if True:
+    if False:
         METHOD = "CF"
         print METHOD
         K_CF = 25
