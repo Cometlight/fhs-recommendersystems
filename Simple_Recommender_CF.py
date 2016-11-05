@@ -1,6 +1,8 @@
 # Load required modules
 import csv
 import numpy as np
+import operator
+import scipy
 
 # Parameters
 UAM_FILE = "./data/UAM.csv"                    # user-artist-matrix (UAM)
@@ -21,20 +23,25 @@ def read_from_file(filename):
             data.append(item)
     return data
 
-def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_consider):
+def simple_recommender_cf(user, UAM, seed_aidx_train, max_items_to_predict, nearest_users_to_consider):
     # user .. the user for whom we want to predict artists for
     # UAM .. user artist matrix
+    # seed_aidx_train .. TODO
     # max_items_to_predict .. how many artists shall be predicted
     # nearest_users_to_consider .. how many similar users to consider
     pc_vec = UAM[user,:]
 
     # Compute similarities as inner product between pc_vec of user and all users via UAM (assuming that UAM is already normalized)
-    sim_users = np.inner(pc_vec, UAM)     # similarities between u and other users
+    #sim_users = np.inner(pc_vec, UAM)     # similarities between u and other users
+    
+    sim_users = 1 - np.apply_along_axis( scipy.spatial.distance.cosine, 1, UAM, [pc_vec] )
 
     # Sort similarities to all others
     sort_idx = np.argsort(sim_users)        # sort in ascending order
 
-    # Select the closest neighbors to seed user u (which are the last but one; last one is user u herself!)
+    
+
+    # Select the  closest neighbors to seed user u (which are the last but one; last one is user u herself!)
     neighbors_idx = sort_idx[-(nearest_users_to_consider+2):-2]
     # for neighbor_idx in neighbors_idx:
         # print "The closest user to user " + str(user) + " are " + str(neighbor_idx) + "."
@@ -42,6 +49,8 @@ def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_cons
 
     # Get list of all neighbors' artist, except those artists from user u
     artist_idx_u = np.nonzero(UAM[user,:])                 # indices of artists user u listened to
+    artist_idx_u = np.intersect1d(artist_idx_u, seed_aidx_train)
+
     artists = []
     for neighbor_idx in neighbors_idx:
         artist_idx_n = np.nonzero(UAM[neighbor_idx,:])[0].tolist()
@@ -71,10 +80,23 @@ def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_cons
 
         artists_score[artist] *= float(user_artist_count) / len(neighbors_idx)
 
+    # Normalization
+    # scores can be normalized like this:  score_normalized = (score - min) / (max - min)
+    # score calculation for our CF is:       score = sum of weighted playcounts of the KNN  * normalized_user_artist_count
+    # so the max possible score should be:     max = KNN * 1 * 1
+    # the min score should be                  min = 0
+
+    playcounts_total = np.sum(UAM)
+    max_score = nearest_users_to_consider
+    min_score = 0
+    for artist, score in artists_score.items():
+        score_normalized = (score - min_score) / (max_score - min_score)
+        artists_score[artist] = score_normalized
+
     # Sort the artists depending on their calculated scores
+    sorted_recommended_artists = sorted(artists_score.items(), reverse=True, key=operator.itemgetter(1))[:max_items_to_predict]
     
-    sorted_recommended_artists = sorted([(key,value) for (key,value) in artists_score.items()], reverse=False)[:max_items_to_predict]
-    dict_rec_aidx = dict(sorted_rec_aidx)
+    dict_rec_aidx = dict(sorted_recommended_artists)
 
     return dict_rec_aidx
 

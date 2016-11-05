@@ -22,8 +22,8 @@ AAM_FILE = "./data/AAM.txt"                # artist-artist similarity matrix (AA
 METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
-NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 1
+NF = 2              # number of folds to perform in cross-validation
+NO_RECOMMENDED_ARTISTS = 50
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -54,7 +54,7 @@ def recommend_CF(UAM, seed_uidx, seed_aidx_train, K):
     # Remove information on test artists from seed's listening vector
     aidx_nz = np.nonzero(pc_vec)[0]                             # artists with non-zero listening events
     aidx_test = np.intersect1d(aidx_nz, seed_aidx_train)        # intersection between all artist indices of user and train indices gives test artist indices
-#    print aidx_test
+    # print aidx_test
 
     # Set to 0 the listening events of seed user user for testing (in UAM; pc_vec just points to UAM, is thus automatically updated)
     UAM[seed_uidx, aidx_test] = 0.0
@@ -150,7 +150,19 @@ def recommend_CB(AAM, seed_aidx_train, K, no_recommendations):
         avg_sim = np.mean(sims_neighbors_idx[mask])
         # Store artist index and corresponding aggregated similarity in dictionary of artists to recommend
         # Length of mask[0] = count of recommendations for this artist
-        dict_recommended_artists_idx[nidx] = avg_sim * len(mask[0])
+
+        # Normalization
+        # scores can be normalized like this:  score_normalized = (score - min) / (max - min)
+        # score calculation for our CB is:      dict_recommended_artists_idx[nidx] = avg_sim * len(mask[0])
+        # so the max possible score should be:                                 max =   1     * NO_RECOMMENDED_ARTISTS
+        # the min score should be                                              min =   0     * 0
+
+        score = avg_sim * len(mask[0])
+        max_score = 1 * no_recommendations
+        min_score = 0 
+        score_normalized = (score - min_score) / (max_score - min_score) 
+
+        dict_recommended_artists_idx[nidx] = score_normalized
 
     #########################################
 
@@ -189,13 +201,27 @@ def run():
     avg_prec = 0;       # mean precision
     avg_rec = 0;        # mean recall
 
-    # For all users in our data (UAM)
-    no_users = 50 # TODO: UAM.shape[0]
-    no_artists = UAM.shape[1]
+    # Get sum of play events per user and per artist
+    sum_pc_user = np.sum(UAM, axis=1)  # returns numpy array [summeZeile1, summeZeile2, summeZeile3,.....]
+    sum_pc_artist = np.sum(UAM, axis=0)
+
+    # Normalize the UAM (simply by computing the fraction of listening events per artist for each user)
+    no_users_uam = UAM.shape[0]
+    no_artists_uam = UAM.shape[1]
+    # np.tile: take sum_pc_user no_artists times (results in an array of length no_artists*no_users)
+    # np.reshape: reshape the array to a matrix
+    # np.transpose: transpose the reshaped matrix
+    artist_sum_copy = np.tile(sum_pc_user, no_artists_uam).reshape(no_artists_uam, no_users_uam).transpose()
+    # Perform sum-to-1 normalization
+    UAM_normalized = UAM / artist_sum_copy
+
+    # For all users in our data (UAM_normalized)
+    no_users = 20 #UAM_normalized.shape[0]
+    no_artists = UAM_normalized.shape[1]
     for u in range(0, no_users):
 
         # Get seed user's artists listened to
-        u_aidx = np.nonzero(UAM[u, :])[0] 
+        u_aidx = np.nonzero(UAM_normalized[u, :])[0] 
 
         # Split user's artists into train and test set for cross-fold (CV) validation
         fold = 0
@@ -205,7 +231,7 @@ def run():
             if VERBOSE:
                 print "User: " + str(u) + ", Fold: " + str(fold) + ", Training items: " + str(len(train_aidx)) + ", Test items: " + str(len(test_aidx)),      # the comma at the end avoids line break
             # Call recommend function
-            copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
+            copy_UAM = UAM_normalized.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
 
             # Run recommendation method specified in METHOD
             # NB: u_aidx[train_aidx] gives the indices of training artists
@@ -216,13 +242,13 @@ def run():
             if METHOD == "RB":          # random baseline
                 dict_rec_aidx = recommend_RB(np.setdiff1d(range(0, no_artists), u_aidx[train_aidx]), NO_RECOMMENDED_ARTISTS) # len(test_aidx))
             elif METHOD == "CF":        # collaborative filtering
-                dict_rec_aidx = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF)
-                # dict_rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
+                dict_rec_aidx = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS, K_CF)
+                #dict_rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
             elif METHOD == "CB":        # content-based recommender
                 dict_rec_aidx = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
             elif METHOD == "HR_SCB":     # hybrid of CF and CB, using score-based fusion (SCB)
                 dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
-                dict_rec_aidx_CF = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF)
+                dict_rec_aidx_CF = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS, K_CF)
 
                 weight_CB = 1
                 weight_CF = 1
@@ -231,29 +257,6 @@ def run():
                 no_recommendations = int(math.floor((K_CB + K_CF) / 2))
 
                 print no_recommendations
-
-
-
-                # normalized score can be calculated like:
-                # score_normalized = (score - min) / (max - min)
-
-                # sollen wir min und max auf den wertebereich unserer tatsächlich erhaltenen scores beziehen ODER auf den wertebereich der theoretisch möglichen min und max werte ?
-
-                # min man könnte im fälle des theoretischen wertebereichs möglicherweise so aus: 
-
-
-                # Normalization of CB
-                    # score calculation for CB is:          dict_recommended_artists_idx[nidx] = avg_sim * len(mask[0])
-                    # so the max possible score should be:                                 max =   1     * NO_RECOMMENDED_ARTISTS
-                    # the min score should be                                              min =   0     * 0
-
-
-                # Normalization of CF
-                    # score calculation for CB is:           score = sum of weighted playcounts of the KNN  * user_artist_count
-                    # so the max possible score should be:     max = KNN * 1 * (PLAYCOUNTS_TOTAL / KNN) * 1 (artist was heard by all KNN)
-                    # the min score should be                  min = 0
-
-
 
                 dict_rec_aidx = {}
 
@@ -352,7 +355,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75:  
         # NO_RECOMMENDED_ARTISTS = 100: 
 
-    if True:
+    if False:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
@@ -366,7 +369,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75: DANIEL
         # NO_RECOMMENDED_ARTISTS = 100: STEPHAN
 
-    if False:
+    if True:
         METHOD = "CF"
         print METHOD
         K_CF = 25
