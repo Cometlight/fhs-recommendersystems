@@ -2,7 +2,7 @@
 import csv
 import numpy as np
 import operator
-import scipy
+import scipy.spatial.distance as scidist
 
 # Parameters
 UAM_FILE = "./data/UAM.csv"                    # user-artist-matrix (UAM)
@@ -23,23 +23,27 @@ def read_from_file(filename):
             data.append(item)
     return data
 
-def simple_recommender_cf(user, UAM, seed_aidx_train, max_items_to_predict, nearest_users_to_consider):
+def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_consider):
     # user .. the user for whom we want to predict artists for
     # UAM .. user artist matrix
-    # seed_aidx_train .. TODO
     # max_items_to_predict .. how many artists shall be predicted
     # nearest_users_to_consider .. how many similar users to consider
     pc_vec = UAM[user,:]
 
     # Compute similarities as inner product between pc_vec of user and all users via UAM (assuming that UAM is already normalized)
-    #sim_users = np.inner(pc_vec, UAM)     # similarities between u and other users
+    sim_users = np.inner(pc_vec, UAM)     # similarities between u and other users
     
-    sim_users = 1 - np.apply_along_axis( scipy.spatial.distance.cosine, 1, UAM, [pc_vec] )
+    # causes exception:  "array must not contain infs or NaNs") 
+    # sim_users = 1 - np.apply_along_axis( scipy.spatial.distance.cosine, 1, UAM, [pc_vec] )
+    
+    # also causes exception:  "array must not contain infs or NaNs")
+    #sim_users = np.zeros(shape=(UAM.shape[0]), dtype=np.float32)
+    #for u in range(0, UAM.shape[0]):
+    #    sim_users[u] = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
+
 
     # Sort similarities to all others
     sort_idx = np.argsort(sim_users)        # sort in ascending order
-
-    
 
     # Select the  closest neighbors to seed user u (which are the last but one; last one is user u herself!)
     neighbors_idx = sort_idx[-(nearest_users_to_consider+2):-2]
@@ -49,7 +53,6 @@ def simple_recommender_cf(user, UAM, seed_aidx_train, max_items_to_predict, near
 
     # Get list of all neighbors' artist, except those artists from user u
     artist_idx_u = np.nonzero(UAM[user,:])                 # indices of artists user u listened to
-    artist_idx_u = np.intersect1d(artist_idx_u, seed_aidx_train)
 
     artists = []
     for neighbor_idx in neighbors_idx:
