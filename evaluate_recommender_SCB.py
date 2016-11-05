@@ -232,6 +232,29 @@ def run():
 
                 print no_recommendations
 
+
+
+                # normalized score can be calculated like:
+                # score_normalized = (score - min) / (max - min)
+
+                # sollen wir min und max auf den wertebereich unserer tatsächlich erhaltenen scores beziehen ODER auf den wertebereich der theoretisch möglichen min und max werte ?
+
+                # min man könnte im fälle des theoretischen wertebereichs möglicherweise so aus: 
+
+
+                # Normalization of CB
+                    # score calculation for CB is:          dict_recommended_artists_idx[nidx] = avg_sim * len(mask[0])
+                    # so the max possible score should be:                                 max =   1     * NO_RECOMMENDED_ARTISTS
+                    # the min score should be                                              min =   0     * 0
+
+
+                # Normalization of CF
+                    # score calculation for CB is:           score = sum of weighted playcounts of the KNN  * user_artist_count
+                    # so the max possible score should be:     max = KNN * 1 * (PLAYCOUNTS_TOTAL / KNN) * 1 (artist was heard by all KNN)
+                    # the min score should be                  min = 0
+
+
+
                 dict_rec_aidx = {}
 
                 # TODO ADD score normalization for both scores
