@@ -203,7 +203,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 20 #UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -338,7 +338,7 @@ if __name__ == '__main__':
     print "Done."
     # Load AAM
     print "Loading AAM... ",
-    # AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
+    AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
     print "Done."
     
     if False:
@@ -357,7 +357,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75:  
         # NO_RECOMMENDED_ARTISTS = 100: 
 
-    if False:
+    if True:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
@@ -371,7 +371,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75: DANIEL
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.36, MAR: 5.66, F1 Score: 2.20
 
-    if True:
+    if False:
         METHOD = "CF"
         print METHOD
         K_CF = 25
