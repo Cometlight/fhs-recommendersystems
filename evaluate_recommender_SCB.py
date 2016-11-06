@@ -367,8 +367,8 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 5: 
         # NO_RECOMMENDED_ARTISTS = 10: 
         # NO_RECOMMENDED_ARTISTS = 20: LUKAS
-        # NO_RECOMMENDED_ARTISTS = 50: 
-        # NO_RECOMMENDED_ARTISTS = 75: DANIEL
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 1.46, MAR: 3.22, F1 Score: 2.01
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 1.40, MAR: 4.55, F1 Score: 2.15
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.36, MAR: 5.66, F1 Score: 2.20
 
     if False:
