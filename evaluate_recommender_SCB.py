@@ -24,7 +24,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 100
+NO_RECOMMENDED_ARTISTS = 50
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -382,8 +382,8 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 1: 
         # NO_RECOMMENDED_ARTISTS = 5: 
         # NO_RECOMMENDED_ARTISTS = 10: Lukas
-        # NO_RECOMMENDED_ARTISTS = 20: 
-        # NO_RECOMMENDED_ARTISTS = 50: Dani
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 3.67, MAR: 2.80, F1 Score: 3.18 (1349 sparse_folds)
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 3.10, MAR: 5.93, F1 Score: 4.07 (1349 sparse_folds)
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.84, MAR: 8.00, F1 Score: 4.19   (1349 sparse_folds)
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.65, MAR: 9.88, F1 Score: 4.18  (1349 sparse_folds)
 
@@ -395,8 +395,8 @@ if __name__ == '__main__':
         run()
         # NO_RECOMMENDED_ARTISTS = 1: 
         # NO_RECOMMENDED_ARTISTS = 5: Lukas
-        # NO_RECOMMENDED_ARTISTS = 10: 
-        # NO_RECOMMENDED_ARTISTS = 20: 
-        # NO_RECOMMENDED_ARTISTS = 50: Dani
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 0.35, MAR: 0.50, F1 Score: 0.41 (1349 sparse_folds)
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 0.35, MAR: 0.20, F1 Score: 0.26 (1349 sparse_folds)
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.37, MAR: 0.11, F1 Score: 0.16 (1349 sparse_folds)
         # NO_RECOMMENDED_ARTISTS = 75: 
         # NO_RECOMMENDED_ARTISTS = 100: Stephan
