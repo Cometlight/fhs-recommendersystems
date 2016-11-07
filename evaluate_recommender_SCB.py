@@ -24,7 +24,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 50
+NO_RECOMMENDED_ARTISTS = 100
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -203,7 +203,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 20#UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -340,10 +340,10 @@ if __name__ == '__main__':
     print "Done."
     # Load AAM
     print "Loading AAM... ",
-    AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
+    # AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
     print "Done."
     
-    if True:
+    if False:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
@@ -373,7 +373,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 1.40, MAR: 4.55, F1 Score: 2.15
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.36, MAR: 5.66, F1 Score: 2.20
 
-    if False:
+    if True:
         METHOD = "CF"
         print METHOD
         K_CF = 25
@@ -384,8 +384,8 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 10: Lukas
         # NO_RECOMMENDED_ARTISTS = 20: 
         # NO_RECOMMENDED_ARTISTS = 50: Dani
-        # NO_RECOMMENDED_ARTISTS = 75: 
-        # NO_RECOMMENDED_ARTISTS = 100: Stephan
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.84, MAR: 8.00, F1 Score: 4.19   (1349 sparse_folds)
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.65, MAR: 9.88, F1 Score: 4.18  (1349 sparse_folds)
 
     if False:
         METHOD = "RB"
