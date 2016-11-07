@@ -11,6 +11,7 @@ from sklearn import cross_validation            # machine learning & evaluation 
 import random
 import scipy.spatial.distance as scidist        # import distance computation module from scipy package
 from time import sleep
+import pandas as pd
 import math
 import Simple_Recommender_CF
 import Evaluate_Recommender
@@ -24,7 +25,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 50
+NO_RECOMMENDED_ARTISTS = 10
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -256,28 +257,57 @@ def run():
                 dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
                 dict_rec_aidx_CF = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF)
 
-                weight_CB = 1
-                weight_CF = 1
+                # Original way of aggregating, before rank aggregation was introduced:
+                # weight_CB = 1
+                # weight_CF = 1
 
-                scores_fused = {}
-                no_recommendations = int(math.floor((K_CB + K_CF) / 2))
+                # scores_fused = {}
+                # no_recommendations = int(math.floor((K_CB + K_CF) / 2))
 
                 # print no_recommendations
 
-                dict_rec_aidx = {}
+                # dict_rec_aidx = {}
 
-                for aidx in dict_rec_aidx_CB.keys():
-                    scores_fused[aidx] = weight_CB * dict_rec_aidx_CB[aidx]**2
+                # for aidx in dict_rec_aidx_CB.keys():
+                #     scores_fused[aidx] = weight_CB * dict_rec_aidx_CB[aidx]**2
 
-                for aidx in dict_rec_aidx_CF.keys():
-                    if aidx in scores_fused:
-                        scores_fused[aidx] += weight_CF * dict_rec_aidx_CF[aidx]**2
+                # for aidx in dict_rec_aidx_CF.keys():
+                #     if aidx in scores_fused:
+                #         scores_fused[aidx] += weight_CF * dict_rec_aidx_CF[aidx]**2
+                #     else:
+                #         scores_fused[aidx] = weight_CF * dict_rec_aidx_CF[aidx]**2
+
+                # sorted_rec_aidx = sorted([(key,value) for (key,value) in scores_fused.items()], reverse=False)[:no_recommendations]
+                # dict_rec_aidx = dict(sorted_rec_aidx)
+
+                # Rank aggregation (Borda rank count):
+                cb_recommended_artists_sorted_by_rank = sorted(dict_rec_aidx_CB.keys(), key=dict_rec_aidx_CB.get)
+                cb_votes = cb_recommended_artists_sorted_by_rank[::-1]
+
+                cf_recommended_artists_sorted_by_rank = sorted(dict_rec_aidx_CF.keys(), key=dict_rec_aidx_CF.get)
+                cf_votes = cf_recommended_artists_sorted_by_rank[::-1]
+
+                votes_final = {} # Key: Artist, Value: Number of votes
+                for i in range(0, len(cb_votes)):
+                    artist = cb_votes[i]
+                    number_of_votes = i+1
+                    if artist not in votes_final:
+                        votes_final[artist] = number_of_votes
                     else:
-                        scores_fused[aidx] = weight_CF * dict_rec_aidx_CF[aidx]**2
+                        votes_final[artist] += number_of_votes
+                    
+                for number_of_votes in range(0, len(cf_votes)):
+                    artist = cb_votes[i]
+                    number_of_votes = i+1
+                    if artist not in votes_final:
+                        votes_final[artist] = number_of_votes
+                    else:
+                        votes_final[artist] += number_of_votes
 
-
-                sorted_rec_aidx = sorted([(key,value) for (key,value) in scores_fused.items()], reverse=False)[:no_recommendations]
+                no_recommendations = min(len(votes_final), NO_RECOMMENDED_ARTISTS)
+                sorted_rec_aidx = sorted([(key,value) for (key,value) in votes_final.items()], reverse=False)[:no_recommendations]
                 dict_rec_aidx = dict(sorted_rec_aidx)
+
 
             rec_aidx = dict_rec_aidx.keys()
 
@@ -336,14 +366,16 @@ if __name__ == '__main__':
     #users = read_from_file(USERS_FILE)
     # Load UAM
     print "Loading UAM... ",
-    UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
+    # UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
+    UAM = pd.read_csv(UAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
     print "Done."
     # Load AAM
     print "Loading AAM... ",
     # AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
+    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
     print "Done."
     
-    if False:
+    if True:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
@@ -373,7 +405,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 1.40, MAR: 4.55, F1 Score: 2.15
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.36, MAR: 5.66, F1 Score: 2.20
 
-    if True:
+    if False:
         METHOD = "CF"
         print METHOD
         K_CF = 25
