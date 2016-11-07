@@ -353,11 +353,11 @@ if __name__ == '__main__':
             run()
         # NO_RECOMMENDED_ARTISTS = 1: 
         # NO_RECOMMENDED_ARTISTS = 5: 
-        # NO_RECOMMENDED_ARTISTS = 10: 
+        # NO_RECOMMENDED_ARTISTS = 10: Stephan
         # NO_RECOMMENDED_ARTISTS = 20:  
-        # NO_RECOMMENDED_ARTISTS = 50: 
+        # NO_RECOMMENDED_ARTISTS = 50: Dani
         # NO_RECOMMENDED_ARTISTS = 75:  
-        # NO_RECOMMENDED_ARTISTS = 100: 
+        # NO_RECOMMENDED_ARTISTS = 100: Lukas
 
     if False:
         METHOD = "CB"
@@ -381,11 +381,11 @@ if __name__ == '__main__':
         run()
         # NO_RECOMMENDED_ARTISTS = 1: 
         # NO_RECOMMENDED_ARTISTS = 5: 
-        # NO_RECOMMENDED_ARTISTS = 10: 
+        # NO_RECOMMENDED_ARTISTS = 10: Lukas
         # NO_RECOMMENDED_ARTISTS = 20: 
-        # NO_RECOMMENDED_ARTISTS = 50: 
+        # NO_RECOMMENDED_ARTISTS = 50: Dani
         # NO_RECOMMENDED_ARTISTS = 75: 
-        # NO_RECOMMENDED_ARTISTS = 100: 
+        # NO_RECOMMENDED_ARTISTS = 100: Stephan
 
     if False:
         METHOD = "RB"
@@ -394,9 +394,9 @@ if __name__ == '__main__':
         print (str(K_RB) + ","),
         run()
         # NO_RECOMMENDED_ARTISTS = 1: 
-        # NO_RECOMMENDED_ARTISTS = 5: 
+        # NO_RECOMMENDED_ARTISTS = 5: Lukas
         # NO_RECOMMENDED_ARTISTS = 10: 
         # NO_RECOMMENDED_ARTISTS = 20: 
-        # NO_RECOMMENDED_ARTISTS = 50: 
+        # NO_RECOMMENDED_ARTISTS = 50: Dani
         # NO_RECOMMENDED_ARTISTS = 75: 
-        # NO_RECOMMENDED_ARTISTS = 100: 
+        # NO_RECOMMENDED_ARTISTS = 100: Stephan
