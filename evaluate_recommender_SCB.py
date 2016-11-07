@@ -203,11 +203,12 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = UAM.shape[0]
+    no_users = 20#UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
     no_sparse_users = 0
+    no_sparse_folds = 0
 
     for u in range(0, no_users):
 
@@ -231,7 +232,9 @@ def run():
 
             # Call recommend function
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
-            Evaluate_Recommender.create_training_UAM(copy_UAM, u, train_aidx)
+            if not Evaluate_Recommender.create_training_UAM(copy_UAM, u, train_aidx):
+                no_sparse_folds = no_sparse_folds + 1
+                continue
 
             # Run recommendation method specified in METHOD
             # NB: u_aidx[train_aidx] gives the indices of training artists
@@ -259,15 +262,12 @@ def run():
                 scores_fused = {}
                 no_recommendations = int(math.floor((K_CB + K_CF) / 2))
 
-                print no_recommendations
+                # print no_recommendations
 
                 dict_rec_aidx = {}
 
                 for aidx in dict_rec_aidx_CB.keys():
-                    if aidx in scores_fused:
-                        scores_fused[aidx] += weight_CB * dict_rec_aidx_CB[aidx]**2
-                    else:
-                        scores_fused[aidx] = weight_CB * dict_rec_aidx_CB[aidx]**2
+                    scores_fused[aidx] = weight_CB * dict_rec_aidx_CB[aidx]**2
 
                 for aidx in dict_rec_aidx_CF.keys():
                     if aidx in scores_fused:
@@ -307,8 +307,8 @@ def run():
 
 
             # add precision and recall for current user and fold to aggregate variables
-            avg_prec += prec / (NF * (no_users - no_sparse_users))
-            avg_rec += rec / (NF * (no_users - no_sparse_users))
+            avg_prec += prec
+            avg_rec += rec
 
             # Output precision and recall of current fold
             if VERBOSE:
@@ -317,13 +317,15 @@ def run():
             # Increase fold counter
             fold += 1
 
+    avg_prec /= (NF * (no_users - no_sparse_users - no_sparse_folds/NF))
+    avg_rec /= (NF * (no_users - no_sparse_users - no_sparse_folds/NF))
     # Output mean average precision and recall
     f1_score = 2 * ( (avg_prec * avg_rec) / (avg_prec + avg_rec))
 
     # Output mean average precision and recall
     if VERBOSE:
         print ("\nMAP: %.2f, MAR: %.2f, F1 Score: %.2f" % (avg_prec, avg_rec, f1_score))
-
+        print str(no_sparse_folds)
 
 
 # Main program, for experimentation.
@@ -341,7 +343,7 @@ if __name__ == '__main__':
     AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
     print "Done."
     
-    if False:
+    if True:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
@@ -357,7 +359,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75:  
         # NO_RECOMMENDED_ARTISTS = 100: 
 
-    if True:
+    if False:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS

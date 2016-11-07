@@ -41,7 +41,13 @@ def create_training_UAM(UAM, seed_uidx, seed_aidx_train):
 
     # Seed user needs to be normalized again
     # Perform sum-to-1 normalization
-    UAM[seed_uidx, :] = UAM[seed_uidx, :] / np.sum(UAM[seed_uidx, :])
+    # Only normalize if user playcount > 0 (it may be 0 if the user has no playcounts considering the current training set)
+    user_playcount = np.sum(UAM[seed_uidx, :])
+    if user_playcount > 0:
+        UAM[seed_uidx, :] = UAM[seed_uidx, :] / np.sum(UAM[seed_uidx, :])
+        return True
+    else:
+        return False
 
 
 # Function that implements dumb random recommender. It predicts a number of randomly chosen items.
