@@ -26,7 +26,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 10
+NO_RECOMMENDED_ARTISTS = 100
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -174,7 +174,8 @@ def recommend_CB(AAM, seed_aidx_train, K, no_recommendations):
         dict_recommended_artists_idx.pop(aidx, None)            # drop (key, value) from dictionary if key (i.e., aidx) exists; otherwise return None
 
     # Sort dictionary by similarity; returns list of tuples(artist_idx, sim)
-    recommendations = sorted([(key,value) for (key,value) in dict_recommended_artists_idx.items()], reverse=False)[:no_recommendations]
+    recommendations = sorted(dict_recommended_artists_idx.items(), key=operator.itemgetter(1), reverse=True)[:no_recommendations]
+    # recommendations = sorted([(key,value) for (key,value) in dict_recommended_artists_idx.items()], reverse=False)[:no_recommendations]
 
     # Return sorted list of recommended artist indices (and scores)
     return dict(recommendations)
@@ -375,7 +376,7 @@ if __name__ == '__main__':
     AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
     print "Done."
     
-    if True:
+    if False:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
@@ -391,7 +392,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75:  
         # NO_RECOMMENDED_ARTISTS = 100: Lukas
 
-    if False:
+    if True:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
