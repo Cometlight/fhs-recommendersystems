@@ -204,7 +204,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = UAM.shape[0]
+    no_users = 10#UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -260,23 +260,23 @@ def run():
                 # Original way of aggregating, before rank aggregation was introduced:
                 # weight_CB = 1
                 # weight_CF = 1
-
+                #
                 # scores_fused = {}
                 # no_recommendations = int(math.floor((K_CB + K_CF) / 2))
-
+                #
                 # print no_recommendations
-
+                #
                 # dict_rec_aidx = {}
-
+                #
                 # for aidx in dict_rec_aidx_CB.keys():
                 #     scores_fused[aidx] = weight_CB * dict_rec_aidx_CB[aidx]**2
-
+                #
                 # for aidx in dict_rec_aidx_CF.keys():
                 #     if aidx in scores_fused:
                 #         scores_fused[aidx] += weight_CF * dict_rec_aidx_CF[aidx]**2
                 #     else:
                 #         scores_fused[aidx] = weight_CF * dict_rec_aidx_CF[aidx]**2
-
+                #
                 # sorted_rec_aidx = sorted([(key,value) for (key,value) in scores_fused.items()], reverse=False)[:no_recommendations]
                 # dict_rec_aidx = dict(sorted_rec_aidx)
 
@@ -296,8 +296,8 @@ def run():
                     else:
                         votes_final[artist] += number_of_votes
                     
-                for number_of_votes in range(0, len(cf_votes)):
-                    artist = cb_votes[i]
+                for i in range(0, len(cf_votes)):
+                    artist = cf_votes[i]
                     number_of_votes = i+1
                     if artist not in votes_final:
                         votes_final[artist] = number_of_votes
