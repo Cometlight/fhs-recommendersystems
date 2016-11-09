@@ -206,7 +206,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 10#UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
