@@ -26,7 +26,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 100
+NO_RECOMMENDED_ARTISTS = 50
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -368,12 +368,12 @@ if __name__ == '__main__':
     # Load UAM
     print "Loading UAM... ",
     # UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
-    UAM = pd.read_csv(UAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
+    UAM = pd.read_csv(UAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
     # Load AAM
     print "Loading AAM... ",
-    # AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
-    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
+    #AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
+    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
     
     if False:
