@@ -13,6 +13,8 @@ OUTPUT_SIMS_FILE = "./data/AAM.txt"               # file to store similarities b
 
 MIN_TERM_DF_PERCENTAGE = 0.003 # E.g. 0.05 means, that a term must occur in at least 5% of all artists, otherwise it is discarded TODO find good value
 MAX_TERM_DF_PERCENTAGE = 0.99 # E.g. 0.95 means, that a term must occur in maximal 95% of all artists, otherwise it is discarded TODO find good value
+MIN_NUMBER_OF_TOKENS_PER_ARTIST = 10
+
 
 # Stop words used by Google
 STOP_WORDS = ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"]
@@ -73,7 +75,6 @@ if __name__ == '__main__':
     artists = io.read_file(ARTISTS_FILE)
 
     for i in range(0, len(artists)):
-    # for i in range(0, 500):
         print "Processing lyrics of artist {} of {}".format(i, len(artists))
         file_name = INPUT_LYRICS_DIRECTORY + str(i) + ".txt"
         if os.path.exists(file_name):
@@ -90,13 +91,15 @@ if __name__ == '__main__':
             language = detect_language(tokens_filtered_stopped)
             tokens_stemmed = do_stemming(tokens_filtered_stopped, language)
 
-            text_content[i] = tokens_stemmed
-            print "File '" + file_name + \
-                "': total tokens: " + str(len(tokens)) + \
-                " | after filtering: " + str(len(tokens_alnum)) + \
-                " | after stopping: " + str(len(tokens_filtered_stopped)) + \
-                " | after stemming: " + str(len(tokens_stemmed)) # of course tokens are only modified, but not removed through stemming
-            # print "File " + file_name + " --- total tokens: " + str(len(tokens)) + "; after filtering, stopping, and stemming: " + str(len(tokens_filtered_stopped))
+            if len(np.unique(tokens_stemmed)) <= MIN_NUMBER_OF_TOKENS_PER_ARTIST:
+                text_content[i] = []
+            else:
+                text_content[i] = tokens_stemmed
+                print "File '" + file_name + \
+                    "': total tokens: " + str(len(tokens)) + \
+                    " | after filtering: " + str(len(tokens_alnum)) + \
+                    " | after stopping: " + str(len(tokens_filtered_stopped)) + \
+                    " | after stemming: " + str(len(tokens_stemmed)) # of course tokens are only modified, but not removed through stemming
         else:
             print "{}'s lyrics file ({}) does not exist! Skipping..".format(artists[i], file_name)
     
@@ -178,7 +181,7 @@ if __name__ == '__main__':
 
     # Storing TF-IDF weights and term list
     print "Saving TF-IDF matrix to " + OUTPUT_TFIDF_FILE + "."
-    np.savetxt(OUTPUT_TFIDF_FILE, tfidf, fmt='%0.6f', delimiter='\t', newline='\n')
+    # np.savetxt(OUTPUT_TFIDF_FILE, tfidf, fmt='%0.6f', delimiter='\t', newline='\n')
 
     print "Saving term list to " + OUTPUT_TERMS_FILE + "."
     with open(OUTPUT_TERMS_FILE, 'w') as f:
