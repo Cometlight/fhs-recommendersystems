@@ -15,6 +15,7 @@ import pandas as pd
 import math
 import Simple_Recommender_CF
 import Evaluate_Recommender
+import operator
 
 # Parameters
 UAM_FILE = "./data/C1ku_UAM.txt"                # user-artist-matrix (UAM)
@@ -25,7 +26,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 10
+NO_RECOMMENDED_ARTISTS = 50
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -173,7 +174,8 @@ def recommend_CB(AAM, seed_aidx_train, K, no_recommendations):
         dict_recommended_artists_idx.pop(aidx, None)            # drop (key, value) from dictionary if key (i.e., aidx) exists; otherwise return None
 
     # Sort dictionary by similarity; returns list of tuples(artist_idx, sim)
-    recommendations = sorted([(key,value) for (key,value) in dict_recommended_artists_idx.items()], reverse=False)[:no_recommendations]
+    recommendations = sorted(dict_recommended_artists_idx.items(), key=operator.itemgetter(1), reverse=True)[:no_recommendations]
+    # recommendations = sorted([(key,value) for (key,value) in dict_recommended_artists_idx.items()], reverse=False)[:no_recommendations]
 
     # Return sorted list of recommended artist indices (and scores)
     return dict(recommendations)
@@ -281,31 +283,30 @@ def run():
                 # dict_rec_aidx = dict(sorted_rec_aidx)
 
                 # Rank aggregation (Borda rank count):
-                cb_recommended_artists_sorted_by_rank = sorted(dict_rec_aidx_CB.keys(), key=dict_rec_aidx_CB.get)
-                cb_votes = cb_recommended_artists_sorted_by_rank[::-1]
+                
 
-                cf_recommended_artists_sorted_by_rank = sorted(dict_rec_aidx_CF.keys(), key=dict_rec_aidx_CF.get)
-                cf_votes = cf_recommended_artists_sorted_by_rank[::-1]
+                # sorted by ascending artist score ... highest index, will be the one with the highest score, so this one will get the most votes
+                cb_recommended_artists_sorted_by_value = sorted(dict_rec_aidx_CB.keys(), key=dict_rec_aidx_CB.get)
+                cf_recommended_artists_sorted_by_value = sorted(dict_rec_aidx_CF.keys(), key=dict_rec_aidx_CF.get)
 
                 votes_final = {} # Key: Artist, Value: Number of votes
-                for i in range(0, len(cb_votes)):
-                    artist = cb_votes[i]
-                    number_of_votes = i+1
+
+                # add votes from CB
+                # enumerate returns the index within the for loop (which in our case == votes) and also the value (which in our case == artist id)
+                for votes, artist in enumerate(cb_recommended_artists_sorted_by_value): 
+                    votes_final[artist] = votes + 1
+
+                # add votes from CF
+                for votes, artist in enumerate(cf_recommended_artists_sorted_by_value): 
                     if artist not in votes_final:
-                        votes_final[artist] = number_of_votes
+                        votes_final[artist] = votes + 1
                     else:
-                        votes_final[artist] += number_of_votes
-                    
-                for i in range(0, len(cf_votes)):
-                    artist = cf_votes[i]
-                    number_of_votes = i+1
-                    if artist not in votes_final:
-                        votes_final[artist] = number_of_votes
-                    else:
-                        votes_final[artist] += number_of_votes
+                        votes_final[artist] += (votes + 1)
+
 
                 no_recommendations = min(len(votes_final), NO_RECOMMENDED_ARTISTS)
-                sorted_rec_aidx = sorted([(key,value) for (key,value) in votes_final.items()], reverse=False)[:no_recommendations]
+                sorted_rec_aidx = sorted(votes_final.items(), key=operator.itemgetter(1), reverse=True)[:no_recommendations]
+                # sorted_rec_aidx = sorted([(key,value) for (key,value) in votes_final.items()], reverse=False)[:no_recommendations]
                 dict_rec_aidx = dict(sorted_rec_aidx)
 
 
@@ -367,15 +368,15 @@ if __name__ == '__main__':
     # Load UAM
     print "Loading UAM... ",
     # UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
-    UAM = pd.read_csv(UAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
+    UAM = pd.read_csv(UAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
     # Load AAM
     print "Loading AAM... ",
-    # AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
-    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32).values # greatly increase reading speed via pandas
+    #AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
+    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
     
-    if True:
+    if False:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
@@ -391,7 +392,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 75:  
         # NO_RECOMMENDED_ARTISTS = 100: Lukas
 
-    if False:
+    if True:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
