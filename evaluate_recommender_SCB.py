@@ -235,7 +235,7 @@ def run():
 
             # Call recommend function
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
-            if not Evaluate_Recommender.create_training_UAM(copy_UAM, u, train_aidx):
+            if not Evaluate_Recommender.create_training_UAM(copy_UAM, u, u_aidx[train_aidx]):
                 no_sparse_folds = no_sparse_folds + 1
                 continue
 
