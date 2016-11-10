@@ -398,10 +398,10 @@ if __name__ == '__main__':
         K_CB = NO_RECOMMENDED_ARTISTS
         print (str(K_CB) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: 
-        # NO_RECOMMENDED_ARTISTS = 5: 
-        # NO_RECOMMENDED_ARTISTS = 10: 
-        # NO_RECOMMENDED_ARTISTS = 20: LUKAS
+        # NO_RECOMMENDED_ARTISTS = 1: 4.07, MAR: 1.56, F1 Score: 2.26
+        # NO_RECOMMENDED_ARTISTS = 5: 3.75, MAR: 0.85, F1 Score: 1.39
+        # NO_RECOMMENDED_ARTISTS = 10: 3.37, MAR: 1.45, F1 Score: 2.02
+        # NO_RECOMMENDED_ARTISTS = 20: 2.92, MAR: 2.44, F1 Score: 2.66
         # NO_RECOMMENDED_ARTISTS = 50: MAP: 1.46, MAR: 3.22, F1 Score: 2.01
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.01, MAR: 6.07, F1 Score: 3.02
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.85, MAR: 7.34, F1 Score: 2.95
@@ -412,9 +412,9 @@ if __name__ == '__main__':
         K_CF = 25
         print (str(K_CF) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: 
-        # NO_RECOMMENDED_ARTISTS = 5: 
-        # NO_RECOMMENDED_ARTISTS = 10: Lukas
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 4.46, MAR: 0.16, F1 Score: 0.31
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 4.36, MAR: 0.81, F1 Score: 1.36
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 4.07, MAR: 1.56, F1 Score: 2.26
         # NO_RECOMMENDED_ARTISTS = 20: MAP: 3.67, MAR: 2.80, F1 Score: 3.18
         # NO_RECOMMENDED_ARTISTS = 50: MAP: 3.10, MAR: 5.93, F1 Score: 4.07
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.84, MAR: 8.00, F1 Score: 4.19
@@ -426,8 +426,8 @@ if __name__ == '__main__':
         K_RB = NO_RECOMMENDED_ARTISTS
         print (str(K_RB) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: 
-        # NO_RECOMMENDED_ARTISTS = 5: Lukas
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 0.36, MAR: 0.01, F1 Score: 0.02
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 0.36, MAR: 0.06, F1 Score: 0.10
         # NO_RECOMMENDED_ARTISTS = 10: MAP: 0.35, MAR: 0.50, F1 Score: 0.41
         # NO_RECOMMENDED_ARTISTS = 20: MAP: 0.35, MAR: 0.20, F1 Score: 0.26
         # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.37, MAR: 0.11, F1 Score: 0.16
