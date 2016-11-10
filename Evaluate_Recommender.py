@@ -127,7 +127,7 @@ if __name__ == '__main__':
             # Call recommend function
             copy_UAM = UAM.copy()       # we need to create a copy of the UAM, otherwise modifications within recommend function will effect the variable
             #rec_aidx = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
-            create_training_UAM(copy_UAM, u, train_aidx)
+            create_training_UAM(copy_UAM, u, u_aidx[train_aidx])
 
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 1)  # MAP: 13.79, MAR: 1.34, F1 Score: 2.44
             # rec_aidx = simple_recommender_cf(u, copy_UAM, len(test_aidx), 2)  # MAP: 13.96, MAR: 1.52, F1 Score: 2.73
