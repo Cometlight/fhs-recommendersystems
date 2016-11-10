@@ -16,6 +16,7 @@ import math
 import Simple_Recommender_CF
 import Evaluate_Recommender
 import operator
+import Evaluate_Recommender_Extended
 
 # Parameters
 UAM_FILE = "./data/C1ku_UAM.txt"                # user-artist-matrix (UAM)
@@ -249,13 +250,16 @@ def run():
             if METHOD == "RB":          # random baseline
                 dict_rec_aidx = recommend_RB(np.setdiff1d(range(0, no_artists), u_aidx[train_aidx]), NO_RECOMMENDED_ARTISTS) # len(test_aidx))
 
+            if METHOD == "RB_U":          # random user baseline
+                dict_rec_aidx = Evaluate_Recommender_Extended.recommend_RB_user(copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS)
+
             elif METHOD == "CF":        # collaborative filtering
                 dict_rec_aidx = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF)
 
             elif METHOD == "CB":        # content-based recommender
                 dict_rec_aidx = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
 
-            elif METHOD == "HR_SCB":     # hybrid of CF and CB, using score-based fusion (SCB)
+            elif METHOD == "HR_BRB":     # hybrid of CF and CB, using score-based fusion (SCB)
                 dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
                 dict_rec_aidx_CF = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF)
 
@@ -309,6 +313,39 @@ def run():
                 # sorted_rec_aidx = sorted([(key,value) for (key,value) in votes_final.items()], reverse=False)[:no_recommendations]
                 dict_rec_aidx = dict(sorted_rec_aidx)
 
+
+            elif METHOD == "PB":  # content-based recommender
+                dict_rec_aidx = Evaluate_Recommender_Extended.recommend_PB(copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS)
+
+            elif METHOD == "HR_SEB": # hybrid, set-based
+                rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
+                rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB)
+                rec_aidx_seb = np.intersect1d(rec_aidx_CB, rec_aidx_CF)[:NO_RECOMMENDED_ARTISTS]  # Perform "set-based fusion". It's as simple as this.
+                dict_rec_aidx = {}
+
+                for aidx in rec_aidx_seb:
+                    dict_rec_aidx[aidx] = 1.0
+
+            elif METHOD == "HR_SCB":
+                dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB)
+                dict_rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
+                # Fuse scores given by CF and by CB recommenders
+                # First, create matrix to hold scores per recommendation method per artist
+                scores = np.zeros(shape=(2, no_artists), dtype=np.float32)
+                # Add scores from CB and CF recommenders to this matrix
+                for aidx in dict_rec_aidx_CB.keys():
+                    scores[0, aidx] = dict_rec_aidx_CB[aidx]
+                for aidx in dict_rec_aidx_CF.keys():
+                    scores[1, aidx] = dict_rec_aidx_CF[aidx]
+                # Apply aggregation function (here, just take arithmetic mean of scores)
+                scores_fused = np.mean(scores, axis=0)
+                # Sort and select top K_HR artists to recommend
+                sorted_idx = np.argsort(scores_fused)
+                sorted_idx_top = sorted_idx[-1 - K_HR:]
+                # Put (artist index, score) pairs of highest scoring artists in a dictionary
+                dict_rec_aidx = {}
+                for i in range(0, len(sorted_idx_top)):
+                    dict_rec_aidx[sorted_idx_top[i]] = scores_fused[sorted_idx_top[i]]
 
             rec_aidx = dict_rec_aidx.keys()
 
@@ -375,50 +412,6 @@ if __name__ == '__main__':
     #AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
     AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
-    
-    if True:
-        METHOD = "HR_SCB"
-        print METHOD
-        K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
-        K_CF = 25                         # number of nearest neighbors to consider in CF (= users)
-        for K_HR in range(10, 11):
-            print (str(K_HR) + ","),
-            run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 3.99, MAR: 0.16, F1 Score: 0.30
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 4.21, MAR: 0.86, F1 Score: 1.43
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 4.02, MAR: 1.61, F1 Score: 2.30
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 3.70, MAR: 2.99, F1 Score: 3.31
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 3.09, MAR: 6.13, F1 Score: 4.11
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.81, MAR: 8.32, F1 Score: 4.20
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.61, MAR: 10.24, F1 Score: 4.16
-
-    if False:
-        METHOD = "CB"
-        print METHOD
-        K_CB = NO_RECOMMENDED_ARTISTS
-        print (str(K_CB) + ","),
-        run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 4.07, MAR: 1.56, F1 Score: 2.26
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 3.75, MAR: 0.85, F1 Score: 1.39
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 3.37, MAR: 1.45, F1 Score: 2.02
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 2.92, MAR: 2.44, F1 Score: 2.66
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 2.30, MAR: 4.72, F1 Score: 3.09
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.01, MAR: 6.07, F1 Score: 3.02
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.85, MAR: 7.34, F1 Score: 2.95
-
-    if False:
-        METHOD = "CF"
-        print METHOD
-        K_CF = 25
-        print (str(K_CF) + ","),
-        run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 4.46, MAR: 0.16, F1 Score: 0.31
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 4.36, MAR: 0.81, F1 Score: 1.36
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 4.07, MAR: 1.56, F1 Score: 2.26
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 3.67, MAR: 2.80, F1 Score: 3.18
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 3.10, MAR: 5.93, F1 Score: 4.07
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.84, MAR: 8.00, F1 Score: 4.19
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.65, MAR: 9.88, F1 Score: 4.18
 
     if False:
         METHOD = "RB"
@@ -433,6 +426,120 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.37, MAR: 0.11, F1 Score: 0.16
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 0.37, MAR: 0.78, F1 Score: 0.50
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 0.37, MAR: 1.03, F1 Score: 0.54
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
+
+    if False:
+        METHOD = "RB_U"
+        print METHOD
+        K_RB = NO_RECOMMENDED_ARTISTS
+        print (str(K_RB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1:
+        # NO_RECOMMENDED_ARTISTS = 5:
+        # NO_RECOMMENDED_ARTISTS = 10:
+        # NO_RECOMMENDED_ARTISTS = 20:
+        # NO_RECOMMENDED_ARTISTS = 50:
+        # NO_RECOMMENDED_ARTISTS = 75:
+        # NO_RECOMMENDED_ARTISTS = 100:
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
+
+    if False:
+        METHOD = "CF"
+        print METHOD
+        K_CF = 25
+        print (str(K_CF) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1: MAP:
+        # NO_RECOMMENDED_ARTISTS = 5: MAP:
+        # NO_RECOMMENDED_ARTISTS = 10: MAP:
+        # NO_RECOMMENDED_ARTISTS = 20: MAP:
+        # NO_RECOMMENDED_ARTISTS = 50: MAP:
+        # NO_RECOMMENDED_ARTISTS = 75: MAP:
+        # NO_RECOMMENDED_ARTISTS = 100: MAP:
+        # NO_RECOMMENDED_ARTISTS = 200: MAP:
+        # NO_RECOMMENDED_ARTISTS = 300: MAP:
+
+    if False:
+        METHOD = "CB"
+        print METHOD
+        K_CB = NO_RECOMMENDED_ARTISTS
+        print (str(K_CB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 4.07, MAR: 1.56, F1 Score: 2.26
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 3.75, MAR: 0.85, F1 Score: 1.39
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 3.37, MAR: 1.45, F1 Score: 2.02
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 2.92, MAR: 2.44, F1 Score: 2.66
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 2.30, MAR: 4.72, F1 Score: 3.09
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.01, MAR: 6.07, F1 Score: 3.02
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.85, MAR: 7.34, F1 Score: 2.95
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
 
 
-# 1349 sparse_folds in CB and Hybrid
+    if False:
+        METHOD = "HR_BRB"
+        print METHOD
+        K_CB = NO_RECOMMENDED_ARTISTS     # number of nearest neighbors to consider in CB (= artists)
+        K_CF = 25                         # number of nearest neighbors to consider in CF (= users)
+        print (str(K_CB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1:
+        # NO_RECOMMENDED_ARTISTS = 5:
+        # NO_RECOMMENDED_ARTISTS = 10:
+        # NO_RECOMMENDED_ARTISTS = 20:
+        # NO_RECOMMENDED_ARTISTS = 50:
+        # NO_RECOMMENDED_ARTISTS = 75:
+        # NO_RECOMMENDED_ARTISTS = 100:
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
+
+    if False:
+        METHOD = "PB"
+        print METHOD
+        K_PB = NO_RECOMMENDED_ARTISTS
+        print (str(K_PB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1:
+        # NO_RECOMMENDED_ARTISTS = 5:
+        # NO_RECOMMENDED_ARTISTS = 10:
+        # NO_RECOMMENDED_ARTISTS = 20:
+        # NO_RECOMMENDED_ARTISTS = 50:
+        # NO_RECOMMENDED_ARTISTS = 75:
+        # NO_RECOMMENDED_ARTISTS = 100:
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
+
+    if False:
+        METHOD = "HR_SEB"
+        print METHOD
+        K_CB = NO_RECOMMENDED_ARTISTS
+        print (str(K_CB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1:
+        # NO_RECOMMENDED_ARTISTS = 5:
+        # NO_RECOMMENDED_ARTISTS = 10:
+        # NO_RECOMMENDED_ARTISTS = 20:
+        # NO_RECOMMENDED_ARTISTS = 50:
+        # NO_RECOMMENDED_ARTISTS = 75:
+        # NO_RECOMMENDED_ARTISTS = 100:
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
+
+    if False:
+        METHOD = "HR_SCB"
+        print METHOD
+        K_CB = NO_RECOMMENDED_ARTISTS
+        K_CF = 25
+        print (str(K_CB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1:
+        # NO_RECOMMENDED_ARTISTS = 5:
+        # NO_RECOMMENDED_ARTISTS = 10:
+        # NO_RECOMMENDED_ARTISTS = 20:
+        # NO_RECOMMENDED_ARTISTS = 50:
+        # NO_RECOMMENDED_ARTISTS = 75:
+        # NO_RECOMMENDED_ARTISTS = 100:
+        # NO_RECOMMENDED_ARTISTS = 200:
+        # NO_RECOMMENDED_ARTISTS = 300:
