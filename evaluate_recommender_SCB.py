@@ -207,7 +207,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = UAM.shape[0]
+    no_users = 20#UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -318,8 +318,8 @@ def run():
                 dict_rec_aidx = Evaluate_Recommender_Extended.recommend_PB(copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS)
 
             elif METHOD == "HR_SEB": # hybrid, set-based
-                rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx])
-                rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB)
+                rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
+                rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
                 rec_aidx_seb = np.intersect1d(rec_aidx_CB, rec_aidx_CF)[:NO_RECOMMENDED_ARTISTS]  # Perform "set-based fusion". It's as simple as this.
                 dict_rec_aidx = {}
 
@@ -327,7 +327,7 @@ def run():
                     dict_rec_aidx[aidx] = 1.0
 
             elif METHOD == "HR_SCB":
-                dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB)
+                dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
                 dict_rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
                 # Fuse scores given by CF and by CB recommenders
                 # First, create matrix to hold scores per recommendation method per artist
@@ -413,7 +413,7 @@ if __name__ == '__main__':
     AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
 
-    if False:
+    if True:
         METHOD = "RB"
         print METHOD
         K_RB = NO_RECOMMENDED_ARTISTS
@@ -514,6 +514,7 @@ if __name__ == '__main__':
     if False:
         METHOD = "HR_SEB"
         print METHOD
+        K_CF = 25
         K_CB = NO_RECOMMENDED_ARTISTS
         print (str(K_CB) + ","),
         run()
@@ -531,6 +532,7 @@ if __name__ == '__main__':
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
+        K_HR = NO_RECOMMENDED_ARTISTS
         K_CF = 25
         print (str(K_CB) + ","),
         run()
