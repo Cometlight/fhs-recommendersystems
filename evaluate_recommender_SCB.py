@@ -26,7 +26,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 50
+NO_RECOMMENDED_ARTISTS = 100
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -206,7 +206,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 10#UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -384,15 +384,15 @@ if __name__ == '__main__':
         for K_HR in range(10, 11):
             print (str(K_HR) + ","),
             run()
-        # NO_RECOMMENDED_ARTISTS = 1: 
-        # NO_RECOMMENDED_ARTISTS = 5: 
-        # NO_RECOMMENDED_ARTISTS = 10: Stephan
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 3.99, MAR: 0.16, F1 Score: 0.30
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 4.21, MAR: 0.86, F1 Score: 1.43
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 4.02, MAR: 1.61, F1 Score: 2.30
         # NO_RECOMMENDED_ARTISTS = 20:  
         # NO_RECOMMENDED_ARTISTS = 50: Dani
         # NO_RECOMMENDED_ARTISTS = 75:  
-        # NO_RECOMMENDED_ARTISTS = 100: Lukas
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.61, MAR: 10.24, F1 Score: 4.16
 
-    if True:
+    if False:
         METHOD = "CB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
@@ -403,8 +403,8 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 10: 
         # NO_RECOMMENDED_ARTISTS = 20: LUKAS
         # NO_RECOMMENDED_ARTISTS = 50: MAP: 1.46, MAR: 3.22, F1 Score: 2.01
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 1.40, MAR: 4.55, F1 Score: 2.15
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.36, MAR: 5.66, F1 Score: 2.20
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.01, MAR: 6.07, F1 Score: 3.02
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.85, MAR: 7.34, F1 Score: 2.95
 
     if False:
         METHOD = "CF"
@@ -415,12 +415,12 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 1: 
         # NO_RECOMMENDED_ARTISTS = 5: 
         # NO_RECOMMENDED_ARTISTS = 10: Lukas
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 3.67, MAR: 2.80, F1 Score: 3.18 (1349 sparse_folds)
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 3.10, MAR: 5.93, F1 Score: 4.07 (1349 sparse_folds)
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.84, MAR: 8.00, F1 Score: 4.19   (1349 sparse_folds)
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.65, MAR: 9.88, F1 Score: 4.18  (1349 sparse_folds)
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 3.67, MAR: 2.80, F1 Score: 3.18
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 3.10, MAR: 5.93, F1 Score: 4.07
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.84, MAR: 8.00, F1 Score: 4.19
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 2.65, MAR: 9.88, F1 Score: 4.18
 
-    if False:
+    if True:
         METHOD = "RB"
         print METHOD
         K_RB = NO_RECOMMENDED_ARTISTS
@@ -428,8 +428,11 @@ if __name__ == '__main__':
         run()
         # NO_RECOMMENDED_ARTISTS = 1: 
         # NO_RECOMMENDED_ARTISTS = 5: Lukas
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 0.35, MAR: 0.50, F1 Score: 0.41 (1349 sparse_folds)
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 0.35, MAR: 0.20, F1 Score: 0.26 (1349 sparse_folds)
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.37, MAR: 0.11, F1 Score: 0.16 (1349 sparse_folds)
-        # NO_RECOMMENDED_ARTISTS = 75: 
-        # NO_RECOMMENDED_ARTISTS = 100: Stephan
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 0.35, MAR: 0.50, F1 Score: 0.41
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 0.35, MAR: 0.20, F1 Score: 0.26
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.37, MAR: 0.11, F1 Score: 0.16
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 0.37, MAR: 0.78, F1 Score: 0.50
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 0.37, MAR: 1.03, F1 Score: 0.54
+
+
+# 1349 sparse_folds in CB and Hybrid
