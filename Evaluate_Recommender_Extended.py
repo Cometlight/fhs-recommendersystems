@@ -226,7 +226,7 @@ def recommend_RB_user(UAM, seed_aidx_train, no_items, K_users = 1):
 
     # Insert scores into dictionary
     dict_random_aidx = {}
-    for aidx in random_aidx:
+    for aidx in random_aidx[0]: # [0] because random_aidx contains a set, in which the values can be found
         dict_random_aidx[aidx] = 1.0            # for random recommendations, all scores are equal
 
     # Return dict of recommended artist indices as keys (and scores as values)
