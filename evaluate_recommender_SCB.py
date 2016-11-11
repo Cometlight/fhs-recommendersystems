@@ -27,7 +27,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 10
+NO_RECOMMENDED_ARTISTS = 75
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -207,7 +207,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 10 # UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -536,9 +536,9 @@ if __name__ == '__main__':
         K_CF = 25
         print (str(K_CB) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 40.57, MAR: 4.89, F1 Score: 8.73
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 27.28, MAR: 9.13, F1 Score: 13.68
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 20.95, MAR: 12.30, F1 Score: 15.50
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
         # NO_RECOMMENDED_ARTISTS = 20: 
         # NO_RECOMMENDED_ARTISTS = 50: 
         # NO_RECOMMENDED_ARTISTS = 75: 

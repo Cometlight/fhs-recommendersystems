@@ -1,20 +1,42 @@
-# CF Recommender
+
+# CF Recommender  (updated: 11.11.2016)
 
 no_recommendations <- c(1, 5, 10, 20, 50, 75, 100, 200, 300)
-cf_MAP <- c(13.79, 13.96, 14.09, 14.28, 14.57, 14.75, 15.00, 16.00, 17.00)
-cf_MAR <- c(1.34, 1.52, 1.64, 1.84, 2.13, 2.3, 1.84, 2.13, 2.3)
-cf_F1 <- c(2.44, 2.73, 2.94, 3.26, 3.72, 3.98, 3.26, 3.72, 3.98)
+cf_MAP <- c(15.98, 13.16, 11.63, 9.81, 7.38, 6.36, 5.66, 4.14, 3.38)
+cf_MAR <- c(0.70, 2.75, 4.79, 7.89, 14.38, 18.31, 21.55, 30.94, 37.40)
+cf_F1 <- c(1.34, 4.56, 6.78, 8.75, 9.75, 9.44, 8.97, 7.31, 6.20)
 
-plot(no_recommendations, cf_MAP, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="[%]", col="red", ylim=c(0,15), main="CF Recommender")
-par(new=TRUE)
-plot(no_recommendations, cf_MAR, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="blue", ylim=c(0,15))
-par(new=TRUE)
-plot(no_recommendations, cf_F1, type="b", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,15))
+# CF - MAP
+plot(no_recommendations, cf_MAP, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="MAP", col="red", ylim=c(0,16), main="CF Recommender - MAP")
 axis(1, at=no_recommendations, labels=no_recommendations)
-axis(2, at=seq(0,15,by=2.5))
+axis(2, at=seq(0,16,by=2.0))
 grid()
-legend(17, 10, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
-par(new=FALSE)
+#text(no_recommendations+20, cf_MAP, cf_MAP) # doesnt look good because of: out of bounds problems
+
+# CF - MAR
+plot(no_recommendations, cf_MAR, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="MAR", col="darkgreen", ylim=c(0,40), main="CF Recommender - MAR")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,40,by=4.0))
+grid()
+
+# CF - F1
+plot(no_recommendations, cf_F1, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="F1", col="blue", ylim=c(0,10), main="CF Recommender - F1")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,10,by=1.0))
+grid()
+
+
+# CB Recommender (updated: 11.11.2016)
+
+no_recommendations <- c(1, 5, 10, 20, 50, 75, 100, 200, 300)
+cb_MAP <- c(4.07, 3.75, 3.37, 2.92, 2.30, 2.01, 1.85, 1.34, 1.15)
+cb_MAR <- c(1.56, 0.85, 1.45, 2.44, 4.72, 6.07, 7.34, 12.47, 15.61)
+cb_F1 <- c(2.26, 1.39, 2.02, 2.66, 3.09, 3.02, 2.95, 2.42, 2.15)
+
+
+
+
+
 
 
 # Random Baseline (Ours)
