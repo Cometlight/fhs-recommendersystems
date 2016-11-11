@@ -27,7 +27,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 200
+NO_RECOMMENDED_ARTISTS = 1
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -318,7 +318,7 @@ def run():
                 dict_rec_aidx = Evaluate_Recommender_Extended.recommend_PB(copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS)
 
             elif METHOD == "HR_SEB": # hybrid, set-based
-                rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
+                rec_aidx_CF = recommend_CF(UAM.copy(), u, u_aidx[train_aidx], K_CF)
                 rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
                 rec_aidx_seb = np.intersect1d(rec_aidx_CB, rec_aidx_CF)[:NO_RECOMMENDED_ARTISTS]  # Perform "set-based fusion". It's as simple as this.
                 dict_rec_aidx = {}
@@ -328,7 +328,7 @@ def run():
 
             elif METHOD == "HR_SCB":
                 dict_rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
-                dict_rec_aidx_CF = recommend_CF(copy_UAM, u, u_aidx[train_aidx], K_CF)
+                dict_rec_aidx_CF = recommend_CF(UAM.copy(), u, u_aidx[train_aidx], K_CF)
                 # Fuse scores given by CF and by CB recommenders
                 # First, create matrix to hold scores per recommendation method per artist
                 scores = np.zeros(shape=(2, no_artists), dtype=np.float32)
@@ -445,7 +445,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200:
         # NO_RECOMMENDED_ARTISTS = 300:
 
-    if True:
+    if False:
         METHOD = "CF"
         print METHOD
         K_CF = 25
@@ -528,7 +528,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200:
         # NO_RECOMMENDED_ARTISTS = 300:
 
-    if False:
+    if True:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS
@@ -536,12 +536,12 @@ if __name__ == '__main__':
         K_CF = 25
         print (str(K_CB) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1:
-        # NO_RECOMMENDED_ARTISTS = 5:
-        # NO_RECOMMENDED_ARTISTS = 10:
-        # NO_RECOMMENDED_ARTISTS = 20:
-        # NO_RECOMMENDED_ARTISTS = 50:
-        # NO_RECOMMENDED_ARTISTS = 75:
-        # NO_RECOMMENDED_ARTISTS = 100:
-        # NO_RECOMMENDED_ARTISTS = 200:
-        # NO_RECOMMENDED_ARTISTS = 300:
+        # NO_RECOMMENDED_ARTISTS = 1: 
+        # NO_RECOMMENDED_ARTISTS = 5: 
+        # NO_RECOMMENDED_ARTISTS = 10: 
+        # NO_RECOMMENDED_ARTISTS = 20: 
+        # NO_RECOMMENDED_ARTISTS = 50: 
+        # NO_RECOMMENDED_ARTISTS = 75: 
+        # NO_RECOMMENDED_ARTISTS = 100: 
+        # NO_RECOMMENDED_ARTISTS = 200: 
+        # NO_RECOMMENDED_ARTISTS = 300: 
