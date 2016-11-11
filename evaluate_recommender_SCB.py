@@ -27,7 +27,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 20
+NO_RECOMMENDED_ARTISTS = 200
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -413,7 +413,7 @@ if __name__ == '__main__':
     AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
 
-    if True:
+    if False:
         METHOD = "RB"
         print METHOD
         K_RB = NO_RECOMMENDED_ARTISTS
@@ -445,21 +445,21 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 0.74, MAR: 13.81, F1 Score: 1.41
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 0.74, MAR: 16.37, F1 Score: 1.42
 
-    if False:
+    if True:
         METHOD = "CF"
         print METHOD
         K_CF = 25
         print (str(K_CF) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP:
-        # NO_RECOMMENDED_ARTISTS = 5: MAP:
-        # NO_RECOMMENDED_ARTISTS = 10: MAP:
-        # NO_RECOMMENDED_ARTISTS = 20: MAP:
-        # NO_RECOMMENDED_ARTISTS = 50: MAP:
-        # NO_RECOMMENDED_ARTISTS = 75: MAP:
-        # NO_RECOMMENDED_ARTISTS = 100: MAP:
-        # NO_RECOMMENDED_ARTISTS = 200: MAP:
-        # NO_RECOMMENDED_ARTISTS = 300: MAP:
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: MAP: 15.98, MAR: 0.70, F1 Score: 1.34
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: MAP: 13.16, MAR: 2.75, F1 Score: 4.56
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: MAP: 11.63, MAR: 4.79, F1 Score: 6.78
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: MAP: 9.81, MAR: 7.89, F1 Score: 8.75
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: MAP: 7.38, MAR: 14.38, F1 Score: 9.75
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: MAP: 6.36, MAR: 18.31, F1 Score: 9.44
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: MAP: 5.66, MAR: 21.55, F1 Score: 8.97
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: MAP: 4.14, MAR: 30.94, F1 Score: 7.31
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: MAP: 3.38, MAR: 37.40, F1 Score: 6.20
 
     if False:
         METHOD = "CB"
@@ -474,8 +474,8 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 50: MAP: 2.30, MAR: 4.72, F1 Score: 3.09
         # NO_RECOMMENDED_ARTISTS = 75: MAP: 2.01, MAR: 6.07, F1 Score: 3.02
         # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.85, MAR: 7.34, F1 Score: 2.95
-        # NO_RECOMMENDED_ARTISTS = 200:
-        # NO_RECOMMENDED_ARTISTS = 300:
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 1.34, MAR: 12.47, F1 Score: 2.42
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 1.15, MAR: 15.61, F1 Score: 2.15
 
 
     if False:
