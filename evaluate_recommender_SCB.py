@@ -27,7 +27,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 1
+NO_RECOMMENDED_ARTISTS = 10
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -57,7 +57,7 @@ def recommend_CF(UAM, seed_uidx, seed_aidx_train, K):
 
     # Remove information on test artists from seed's listening vector
     aidx_nz = np.nonzero(pc_vec)[0]                             # artists with non-zero listening events
-    aidx_test = np.intersect1d(aidx_nz, seed_aidx_train)        # intersection between all artist indices of user and train indices gives test artist indices
+    aidx_test = np.setdiff1d(aidx_nz, seed_aidx_train)        # intersection between all artist indices of user and train indices gives test artist indices
     # print aidx_test
 
     # Set to 0 the listening events of seed user user for testing (in UAM; pc_vec just points to UAM, is thus automatically updated)
@@ -207,7 +207,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = UAM.shape[0]
+    no_users = 10 # UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -536,9 +536,9 @@ if __name__ == '__main__':
         K_CF = 25
         print (str(K_CB) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: 
-        # NO_RECOMMENDED_ARTISTS = 5: 
-        # NO_RECOMMENDED_ARTISTS = 10: 
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 40.57, MAR: 4.89, F1 Score: 8.73
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 27.28, MAR: 9.13, F1 Score: 13.68
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 20.95, MAR: 12.30, F1 Score: 15.50
         # NO_RECOMMENDED_ARTISTS = 20: 
         # NO_RECOMMENDED_ARTISTS = 50: 
         # NO_RECOMMENDED_ARTISTS = 75: 
