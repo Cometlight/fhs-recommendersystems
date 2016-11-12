@@ -429,21 +429,21 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 0.32, MAR: 1.99, F1 Score: 0.55
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 0.32, MAR: 3.03, F1 Score: 0.58
 
-    if False:
+    if True:
         METHOD = "RB_U"
         print METHOD
         K_RB = NO_RECOMMENDED_ARTISTS
         print (str(K_RB) + ","),
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 0.80, MAR: 7.76, F1 Score: 1.44
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 0.77, MAR: 7.83, F1 Score: 1.40
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 0.79, MAR: 7.80, F1 Score: 1.43
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 0.80, MAR: 8.14, F1 Score: 1.46
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.80, MAR: 8.88, F1 Score: 1.47
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 0.79, MAR: 10.12, F1 Score: 1.47
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 0.77, MAR: 10.94, F1 Score: 1.44
-        # NO_RECOMMENDED_ARTISTS = 200: MAP: 0.74, MAR: 13.81, F1 Score: 1.41
-        # NO_RECOMMENDED_ARTISTS = 300: MAP: 0.74, MAR: 16.37, F1 Score: 1.42
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 0.96, MAR: 0.04, F1 Score: 0.07
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 1.01, MAR: 0.18, F1 Score: 0.30
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 0.98, MAR: 0.33, F1 Score: 0.50
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 0.95, MAR: 0.70, F1 Score: 0.81
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 0.99, MAR: 1.73, F1 Score: 1.26
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 1.02, MAR: 2.73, F1 Score: 1.48
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.00, MAR: 3.51, F1 Score: 1.56
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 0.96, MAR: 6.57, F1 Score: 1.68
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 0.92, MAR: 9.40, F1 Score: 1.67
 
     if False:
         METHOD = "CF"
@@ -528,7 +528,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200:
         # NO_RECOMMENDED_ARTISTS = 300:
 
-    if True:
+    if False:
         METHOD = "HR_SCB"
         print METHOD
         K_CB = NO_RECOMMENDED_ARTISTS

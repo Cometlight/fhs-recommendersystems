@@ -214,7 +214,7 @@ def recommend_RB_user(UAM, seed_aidx_train, no_items, K_users = 1):
     # Get artits of these
     random_aidx_nz = np.nonzero(UAM[random_uidx,:])[1]      # only interested in artists, hence [1]
     # Remove artists in training set of seed user
-    random_aidx = np.setdiff1d(set(random_aidx_nz), seed_aidx_train)
+    random_aidx = np.setdiff1d(set(random_aidx_nz), seed_aidx_train)[0] # [0] because it contains a set, in which the values can be found
 
     if VERBOSE:
         print str(K_users) + ' user(s) randomly chosen, ' + str(no_items) + ' recommendations requested, ' + str(len(random_aidx)) + ' found' # restart with K=' + str(K_users+1)
@@ -224,9 +224,12 @@ def recommend_RB_user(UAM, seed_aidx_train, no_items, K_users = 1):
         K_users += 1
         return recommend_RB_user(UAM, seed_aidx_train, no_items, K_users)
 
+    # We only want no_items of recommendations. Let's only take the first no_items
+    random_aidx = list(random_aidx)[:no_items]
+
     # Insert scores into dictionary
     dict_random_aidx = {}
-    for aidx in random_aidx[0]: # [0] because random_aidx contains a set, in which the values can be found
+    for aidx in random_aidx: 
         dict_random_aidx[aidx] = 1.0            # for random recommendations, all scores are equal
 
     # Return dict of recommended artist indices as keys (and scores as values)
