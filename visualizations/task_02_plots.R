@@ -60,7 +60,24 @@ cb_MAP <- c(4.07, 3.75, 3.37, 2.92, 2.30, 2.01, 1.85, 1.34, 1.15)
 cb_MAR <- c(1.56, 0.85, 1.45, 2.44, 4.72, 6.07, 7.34, 12.47, 15.61)
 cb_F1 <- c(2.26, 1.39, 2.02, 2.66, 3.09, 3.02, 2.95, 2.42, 2.15)
 
+# CB - MAP
+plot(no_recommendations, cb_MAP, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAP", col="red", ylim=c(0,5), main="CB Recommender - MAP")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,5,by=0.5))
+grid()
+#text(no_recommendations+20, cf_MAP, cf_MAP) # doesnt look good because of: out of bounds problems
 
+# CB - MAR
+plot(no_recommendations, cb_MAR, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAR", col="darkgreen", ylim=c(0,20), main="CB Recommender - MAR")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,20,by=2.0))
+grid()
+
+# CB - F1
+plot(no_recommendations, cb_F1, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="F1", col="blue", ylim=c(0,4), main="CB Recommender - F1")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,4,by=0.5))
+grid()
 
 
 
