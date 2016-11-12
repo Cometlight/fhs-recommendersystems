@@ -7,20 +7,20 @@ cf_MAR <- c(0.70, 2.75, 4.79, 7.89, 14.38, 18.31, 21.55, 30.94, 37.40)
 cf_F1 <- c(1.34, 4.56, 6.78, 8.75, 9.75, 9.44, 8.97, 7.31, 6.20)
 
 # CF - MAP
-plot(no_recommendations, cf_MAP, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="MAP", col="red", ylim=c(0,16), main="CF Recommender - MAP")
+plot(no_recommendations, cf_MAP, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAP", col="red", ylim=c(0,16), main="CF Recommender - MAP")
 axis(1, at=no_recommendations, labels=no_recommendations)
 axis(2, at=seq(0,16,by=2.0))
 grid()
 #text(no_recommendations+20, cf_MAP, cf_MAP) # doesnt look good because of: out of bounds problems
 
 # CF - MAR
-plot(no_recommendations, cf_MAR, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="MAR", col="darkgreen", ylim=c(0,40), main="CF Recommender - MAR")
+plot(no_recommendations, cf_MAR, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAR", col="darkgreen", ylim=c(0,40), main="CF Recommender - MAR")
 axis(1, at=no_recommendations, labels=no_recommendations)
 axis(2, at=seq(0,40,by=4.0))
 grid()
 
 # CF - F1
-plot(no_recommendations, cf_F1, type="b", xaxt="n", yaxt="n", xlab="k neighbours", ylab="F1", col="blue", ylim=c(0,10), main="CF Recommender - F1")
+plot(no_recommendations, cf_F1, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="F1", col="blue", ylim=c(0,10), main="CF Recommender - F1")
 axis(1, at=no_recommendations, labels=no_recommendations)
 axis(2, at=seq(0,10,by=1.0))
 grid()
