@@ -27,7 +27,7 @@ METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 75
+NO_RECOMMENDED_ARTISTS = 300
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -539,9 +539,9 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
         # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
         # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
-        # NO_RECOMMENDED_ARTISTS = 20: 
-        # NO_RECOMMENDED_ARTISTS = 50: 
-        # NO_RECOMMENDED_ARTISTS = 75: 
-        # NO_RECOMMENDED_ARTISTS = 100: 
-        # NO_RECOMMENDED_ARTISTS = 200: 
-        # NO_RECOMMENDED_ARTISTS = 300: 
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
