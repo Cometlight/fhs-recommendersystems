@@ -25,6 +25,33 @@ axis(1, at=no_recommendations, labels=no_recommendations)
 axis(2, at=seq(0,10,by=1.0))
 grid()
 
+################################## START HYBRID (RANK BASED) ##################################
+
+no_recommendations <- c(1, 5, 10, 20, 50, 75, 100, 200, 300)
+hrb_MAP <- c(6.39, 8.42, 7.8, 7.03, 5.63, 4.98, 4.53, 3.47, 2.9)
+hrb_MAR <- c(0.32, 1.96, 3.55, 6.22, 11.93, 15.47, 18.56, 27.35, 33.59)
+hrb_F1 <- c(0.62, 3.18, 4.88, 6.6, 7.65, 7.53, 7.28, 6.15, 5.33)
+
+# HYBRID (RB) - MAP
+plot(no_recommendations, hrb_MAP, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAP", col="red", ylim=c(0,16), main="HYBRID (RB) Recommender - MAP")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,16,by=2.0))
+grid()
+
+# HYBRID (RB) - MAR
+plot(no_recommendations, hrb_MAR, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAR", col="darkgreen", ylim=c(0,40), main="HYBRID (RB) Recommender - MAR")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,40,by=4.0))
+grid()
+
+# HYBRID (RB) - F1
+plot(no_recommendations, hrb_F1, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="F1", col="blue", ylim=c(0,10), main="HYBRID (RB) Recommender - F1")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,10,by=1.0))
+grid()
+
+################################## END HYBRID (RANK BASED) ##################################
+
 
 # CB Recommender (updated: 11.11.2016)
 
