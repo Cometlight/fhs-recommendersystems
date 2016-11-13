@@ -137,7 +137,7 @@ points(sort(cb_MAR), cb_MAP[order(cb_MAR)], pch=20, col="magenta")
 axis(1, at=seq(0,40, by=5))
 axis(2, at=seq(0, 16, by=1))
 grid()
-legend(15, 15, c("Collaborative Filtering", "Content Based", "Hybrid (CF-CB, rank-based)", "Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("red", "orange", "magenta", "blue", "darkgreen"))
+legend(15, 15, c("Collaborative Filtering", "Hybrid (CF-CB, rank-based)", "Content Based", "Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("red", "orange", "magenta", "blue", "darkgreen"))
 par(new=FALSE)
 
 # Compare results: F1/number of recommendations
