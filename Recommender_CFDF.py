@@ -78,8 +78,8 @@ def recommender_cfdf_country(user, UAM, max_items_to_predict, nearest_users_to_c
     user_coordinates = (lat, lon) # (lat, lon)
     distances_to_user = []
     for u in users_extended:
-        u_lat = users_extended[u][4]
-        u_lon = users_extended[u][3]
+        u_lat = users_extended[user][4]
+        u_lon = users_extended[user][3]
         if (np.isnan(u_lat) or np.isnan(u_lon)):
             distance = 99999999999999
         else:
