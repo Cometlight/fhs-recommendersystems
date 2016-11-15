@@ -52,6 +52,60 @@ grid()
 
 ################################## END HYBRID (RANK BASED) ##################################
 
+################################## START HYBRID (SET BASED) ##################################
+
+no_recommendations <- c(1, 5, 10, 20, 50, 75, 100, 200, 300)
+hsb_MAP <- c()
+hsb_MAR <- c()
+hsb_F1 <- c()
+
+# HYBRID (SB) - MAP
+plot(no_recommendations, hsb_MAP, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAP", col="red", ylim=c(0,16), main="HYBRID (SB) Recommender - MAP")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,16,by=2.0))
+grid()
+
+# HYBRID (SB) - MAR
+plot(no_recommendations, hsb_MAR, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAR", col="darkgreen", ylim=c(0,40), main="HYBRID (SB) Recommender - MAR")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,40,by=4.0))
+grid()
+
+# HYBRID (SB) - F1
+plot(no_recommendations, hsb_F1, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="F1", col="blue", ylim=c(0,10), main="HYBRID (RB) Recommender - F1")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,10,by=1.0))
+grid()
+
+################################## END HYBRID (SET BASED) ##################################
+
+################################## START POPULARITY BASED ##################################
+
+no_recommendations <- c(1, 5, 10, 20, 50, 75, 100, 200, 300)
+pb_MAP <- c(4.23, 3.77, 3.15, 3.1, 3.03, 2.88, 2.7, 2.21, 1.91)
+pb_MAR <- c(0.16, 0.73, 1.14, 2.23, 5.2, 7.36, 9.1, 14.9, 19.19)
+pb_F1 <- c(0.31, 1.23, 1.67, 2.6, 3.82, 4.14, 4.17, 3.85, 3.47)
+
+# HYBRID (SB) - MAP
+plot(no_recommendations, pb_MAP, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAP", col="red", ylim=c(0,16), main="Popularity-based Recommender - MAP")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,16,by=2.0))
+grid()
+
+# HYBRID (SB) - MAR
+plot(no_recommendations, pb_MAR, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="MAR", col="darkgreen", ylim=c(0,40), main="Popularity-based Recommender - MAR")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,40,by=4.0))
+grid()
+
+# HYBRID (SB) - F1
+plot(no_recommendations, pb_F1, type="b", xaxt="n", yaxt="n", xlab="NO_RECOMMENDED_ARTISTS", ylab="F1", col="blue", ylim=c(0,10), main="Popularity-based Recommender - F1")
+axis(1, at=no_recommendations, labels=no_recommendations)
+axis(2, at=seq(0,10,by=1.0))
+grid()
+
+################################## END POPULARITY BASED ##################################
+
 
 # CB Recommender (updated: 11.11.2016)
 
