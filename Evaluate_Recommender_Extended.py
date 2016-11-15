@@ -28,7 +28,7 @@ METHOD = "CB"                       # recommendation method
 USERS_EXTENDED_FILE = "./data/C1ku_users_extended.csv"
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 300
+NO_RECOMMENDED_ARTISTS = 50
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -208,7 +208,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = UAM.shape[0]
+    no_users = 20 #UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count

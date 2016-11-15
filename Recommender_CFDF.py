@@ -58,7 +58,7 @@ def recommender_cfdf_age(user, UAM, max_items_to_predict, nearest_users_to_consi
     for u in range(0, UAM.shape[0]):
        sim_users[u] = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
     
-    sort_idx = np.lexsort((sim_users * -1, age_difference)) # Sort by age_difference, then by sim_users*-1
+    sort_idx = np.lexsort((sim_users * -1, age_difference.astype('int'))) # Sort by age_difference, then by sim_users*-1
     sort_idx_filtered = sort_idx[nearest_users_to_consider:]
     
     UAM[sort_idx_filtered] = 0
@@ -78,8 +78,8 @@ def recommender_cfdf_country(user, UAM, max_items_to_predict, nearest_users_to_c
     user_coordinates = (lat, lon) # (lat, lon)
     distances_to_user = []
     for u in users_extended:
-        u_lat = users_extended[u][4]
-        u_lon = users_extended[u][3]
+        u_lat = users_extended[user][4]
+        u_lon = users_extended[user][3]
         if (np.isnan(u_lat) or np.isnan(u_lon)):
             distance = 99999999999999
         else:
