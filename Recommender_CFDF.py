@@ -25,6 +25,10 @@ def read_from_file(filename):
             data.append(item)
     return data
 
+
+
+
+
 def recommender_cfdf_gender(user, UAM, max_items_to_predict, nearest_users_to_consider, users_extended):
     # user .. the user for whom we want to predict artists for
     # UAM .. user artist matrix; is modified by this function!
@@ -38,6 +42,9 @@ def recommender_cfdf_gender(user, UAM, max_items_to_predict, nearest_users_to_co
     users_different_gender_indices = np.where(users_extended[:,5] != user_gender)
     UAM[users_different_gender_indices] = 0
     return Simple_Recommender_CF.simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_consider)
+
+
+
 
 def recommender_cfdf_age(user, UAM, max_items_to_predict, nearest_users_to_consider, users_extended):
     # user .. the user for whom we want to predict artists for
@@ -64,6 +71,9 @@ def recommender_cfdf_age(user, UAM, max_items_to_predict, nearest_users_to_consi
     UAM[sort_idx_filtered] = 0
     return Simple_Recommender_CF.simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_consider)
 
+
+
+
 def recommender_cfdf_country(user, UAM, max_items_to_predict, nearest_users_to_consider, users_extended):
     # user .. the user for whom we want to predict artists for
     # UAM .. user artist matrix; is modified by this function!
@@ -77,13 +87,14 @@ def recommender_cfdf_country(user, UAM, max_items_to_predict, nearest_users_to_c
     
     user_coordinates = (lat, lon) # (lat, lon)
     distances_to_user = []
-    for u in users_extended:
-        u_lat = users_extended[user][4]
-        u_lon = users_extended[user][3]
-        if (np.isnan(u_lat) or np.isnan(u_lon)):
+    for other_user_index, other_user in enumerate(users_extended):
+        other_user_lat = users_extended[other_user_index][4]
+        other_user_lon = users_extended[other_user_index][3]
+        other_user_coordinates = (other_user_lat, other_user_lon)
+        if (np.isnan(other_user_lat) or np.isnan(other_user_lon)):
             distance = 99999999999999
         else:
-            distance = great_circle(user_coordinates, (u_lat, u_lon)).miles
+            distance = great_circle(user_coordinates, other_user_coordinates).miles
         distances_to_user.append(distance)
     
     distances_to_user[user] = 99999999999999
@@ -94,29 +105,8 @@ def recommender_cfdf_country(user, UAM, max_items_to_predict, nearest_users_to_c
        sim_users[u] = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
 
     sort_idx = np.lexsort((sim_users * -1, distances_to_user)) # Sort by age_difference, then by sim_users*-1
-    sort_idx_filtered = sort_idx[nearest_users_to_consider:]
+    sort_idx_filtered = np.setdiff1d(sort_idx[nearest_users_to_consider:], user)
 
     UAM[sort_idx_filtered] = 0
     return Simple_Recommender_CF.simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_consider)
 
-# Main program
-if __name__ == '__main__':
-    # Load metadata from provided files into lists
-    artists = read_from_file(ARTISTS_FILE)
-    users = read_from_file(USERS_FILE)
-
-    # Load UAM
-    UAM = np.loadtxt(UAM_FILE, delimiter='\t', dtype=np.float32)
-
-    # For all users apply the simple recommender cf
-    for user in range(0, UAM.shape[0]):
-        # get playcount vector for current user u
-        print "Next user recommendations: "
-        user_most_listened_to_artists = np.argsort(UAM[user,:])[::-1]
-        for i in range(0, 10):
-            print str(i+1) + ". rank: " + artists[user_most_listened_to_artists[i]]
-        print "- - - - - - - "
-        recommended_artists_idx = simple_recommender_cf(user, UAM, MAX_ITEMS_TO_PREDICT, NEAREST_USERS)
-        for i in range(0, len(recommended_artists_idx)):
-            print str(i+1) + ". rank: " + artists[recommended_artists_idx[i]]
-        print "\n"
