@@ -1,8 +1,7 @@
 # Implementation of a simple evaluation framework for recommender systems algorithms.
 # This script further implements different baseline recommenders: collaborative filtering,
 # content-based recommender, random recommendation, and simple hybrid methods.
-# It also implements a score-based fusion technique for hybrid recommendation.
-__author__ = 'mms'
+# It also implements a score-based fusion technique for hybrid recommendation.__author__ = 'mms'
 
 # Load required modules
 import csv
@@ -17,6 +16,7 @@ import Simple_Recommender_CF
 import Evaluate_Recommender
 import operator
 import Evaluate_Recommender_Extended
+import Recommender_CFDF
 
 # Parameters
 UAM_FILE = "./data/C1ku_UAM.txt"                # user-artist-matrix (UAM)
@@ -25,6 +25,7 @@ USERS_FILE = "UAM_users.txt"        # user names for UAM
 AAM_FILE = "./data/C1ku_AAM.txt"                # artist-artist similarity matrix (AAM)
 METHOD = "CB"                       # recommendation method
                                     # ["RB", "CF", "CB", "HR_SEB", "HR_SCB"]
+USERS_EXTENDED_FILE = "./data/C1ku_users_extended.csv"
 
 NF = 10              # number of folds to perform in cross-validation
 NO_RECOMMENDED_ARTISTS = 300
@@ -346,6 +347,16 @@ def run():
                 dict_rec_aidx = {}
                 for i in range(0, len(sorted_idx_top)):
                     dict_rec_aidx[sorted_idx_top[i]] = scores_fused[sorted_idx_top[i]]
+            
+            elif METHOD == "DF_GENDER":
+                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_gender(u, UAM.copy(), NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
+            
+            elif METHOD == "DF_AGE":
+                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_age(u, UAM.copy(), NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
+
+            elif METHOD == "DF_COUNTRY":
+                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_country(u, UAM.copy(), NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
+
 
             rec_aidx = dict_rec_aidx.keys()
 
@@ -410,7 +421,10 @@ if __name__ == '__main__':
     # Load AAM
     print "Loading AAM... ",
     #AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
-    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
+    # AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
+    print "Done."
+    print "Loading USERS_EXTENDED...",
+    USERS_EXTENDED = pd.read_csv(USERS_EXTENDED_FILE, delimiter='\t', header=0).values
     print "Done."
 
     if False:
@@ -429,7 +443,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 0.32, MAR: 1.99, F1 Score: 0.55
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 0.32, MAR: 3.03, F1 Score: 0.58
 
-    if True:
+    if False:
         METHOD = "RB_U"
         print METHOD
         K_RB = NO_RECOMMENDED_ARTISTS
@@ -535,6 +549,51 @@ if __name__ == '__main__':
         K_HR = NO_RECOMMENDED_ARTISTS
         K_CF = 25
         print (str(K_CB) + ","),
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
+
+    if False:
+        METHOD = "DF_GENDER"
+        print METHOD
+        K_CF = 25
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
+
+    if False:
+        METHOD = "DF_AGE"
+        print METHOD
+        K_CF = 25
+        run()
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
+
+    if True:
+        METHOD = "DF_COUNTRY"
+        print METHOD
+        K_CF = 25
         run()
         # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
         # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
