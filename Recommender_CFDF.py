@@ -65,7 +65,7 @@ def recommender_cfdf_age(user, UAM, max_items_to_predict, nearest_users_to_consi
     for u in range(0, UAM.shape[0]):
        sim_users[u] = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
     
-    sort_idx = np.lexsort((sim_users * -1, age_difference)) # Sort by age_difference, then by sim_users*-1
+    sort_idx = np.lexsort((sim_users * -1, age_difference.astype('int'))) # Sort by age_difference, then by sim_users*-1
     sort_idx_filtered = sort_idx[nearest_users_to_consider:]
     
     UAM[sort_idx_filtered] = 0

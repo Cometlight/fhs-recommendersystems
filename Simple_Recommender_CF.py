@@ -33,7 +33,11 @@ def simple_recommender_cf(user, UAM, max_items_to_predict, nearest_users_to_cons
     # Compute similarities as inner product between pc_vec of user and all users via UAM (assuming that UAM is already normalized)
     sim_users = np.zeros(shape=(UAM.shape[0]), dtype=np.float32)
     for u in range(0, UAM.shape[0]):
-       sim_users[u] = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
+        if (np.max(UAM[u, :]) == 0):
+            similarity = 0
+        else:
+            similarity = 1.0 - scidist.cosine(pc_vec, UAM[u,:])
+        sim_users[u] = similarity
 
 
     # Sort similarities to all others
