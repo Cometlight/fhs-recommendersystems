@@ -349,13 +349,13 @@ def run():
                     dict_rec_aidx[sorted_idx_top[i]] = scores_fused[sorted_idx_top[i]]
             
             elif METHOD == "DF_GENDER":
-                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_gender(u, UAM.copy(), NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
+                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_gender(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
             
             elif METHOD == "DF_AGE":
-                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_age(u, UAM.copy(), NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
+                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_age(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
 
             elif METHOD == "DF_COUNTRY":
-                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_country(u, UAM.copy(), NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
+                dict_rec_aidx = Recommender_CFDF.recommender_cfdf_country(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF, USERS_EXTENDED)
 
 
             rec_aidx = dict_rec_aidx.keys()
@@ -560,7 +560,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
 
-    if False:
+    if True:
         METHOD = "DF_GENDER"
         print METHOD
         K_CF = 25
@@ -590,7 +590,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
 
-    if True:
+    if False:
         METHOD = "DF_COUNTRY"
         print METHOD
         K_CF = 25
