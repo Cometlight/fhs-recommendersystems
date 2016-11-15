@@ -151,3 +151,17 @@ lines(c(50, 50), c(0,15), col="black", lty="dashed")
 text(65, 14.5, "peak")
 grid()
 legend(140, 15.2, c("Collaborative Filtering", "Hybrid (CF-CB, rank-based)", "Content Based", "Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("red", "magenta", "orange", "blue", "darkgreen"))
+par(new=FALSE)
+
+
+#  For presentation
+# Random Baseline vs Random baseline with user picking
+plot(rb_MAR, rb_MAP, type="l", xaxt="n", yaxt="n", xlab="MAR [%]", ylab="MAP [%]", col="blue", ylim=c(0,1.2), xlim=c(0,10))
+points(rb_MAR, rb_MAP, pch=20, col="blue")
+par(new=TRUE)
+plot(sort(rb2_MAR), rb2_MAP[order(rb2_MAR)], type="l", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,1.2), xlim=c(0,10))
+points(sort(rb2_MAR), rb2_MAP[order(rb2_MAR)], pch=20, col="darkgreen")
+axis(1, at=seq(0,10, by=1))
+axis(2, at=seq(0,1.2, by=0.2))
+grid()
+legend(5, 0.8, c("Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("blue", "darkgreen"))
