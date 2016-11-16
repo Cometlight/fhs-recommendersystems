@@ -17,6 +17,7 @@ import Evaluate_Recommender
 import operator
 import Evaluate_Recommender_Extended
 import Recommender_CFDF
+import random
 
 # Parameters
 UAM_FILE = "./data/C1ku_UAM.txt"                # user-artist-matrix (UAM)
@@ -319,9 +320,25 @@ def run():
                 dict_rec_aidx = Evaluate_Recommender_Extended.recommend_PB(copy_UAM, u_aidx[train_aidx], NO_RECOMMENDED_ARTISTS)
 
             elif METHOD == "HR_SEB": # hybrid, set-based
-                rec_aidx_CF = recommend_CF(UAM.copy(), u, u_aidx[train_aidx], K_CF)
+                rec_aidx_CF = Simple_Recommender_CF.simple_recommender_cf(u, copy_UAM, NO_RECOMMENDED_ARTISTS, K_CF)
                 rec_aidx_CB = recommend_CB(AAM, u_aidx[train_aidx], K_CB, NO_RECOMMENDED_ARTISTS)
                 rec_aidx_seb = np.intersect1d(rec_aidx_CB, rec_aidx_CF)[:NO_RECOMMENDED_ARTISTS]  # Perform "set-based fusion". It's as simple as this.
+
+                i = 0
+
+                # fill rec_aidx_seb with random entries from CF/CB until NO_RECOMMENDED_ARTISTS can be returned
+                while(len(rec_aidx_seb) < NO_RECOMMENDED_ARTISTS):
+                    if(i%2==0):
+                        key = random.choice(rec_aidx_CF.keys())
+                        rec_aidx_CF.pop(key)
+                    else:
+                        key = random.choice(rec_aidx_CB.keys())
+                        rec_aidx_CB.pop(key)
+
+                    rec_aidx_seb = np.append(rec_aidx_seb, key)
+                    np.unique(rec_aidx_seb)
+                    i+=1
+
                 dict_rec_aidx = {}
 
                 for aidx in rec_aidx_seb:
@@ -421,7 +438,7 @@ if __name__ == '__main__':
     # Load AAM
     print "Loading AAM... ",
     #AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
-    # AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
+    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
     print "Loading USERS_EXTENDED...",
     USERS_EXTENDED = pd.read_csv(USERS_EXTENDED_FILE, delimiter='\t', header=0).values
@@ -525,7 +542,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200:
         # NO_RECOMMENDED_ARTISTS = 300:
 
-    if False:
+    if True:
         METHOD = "HR_SEB"
         print METHOD
         K_CF = 25
