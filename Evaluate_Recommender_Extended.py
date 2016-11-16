@@ -28,7 +28,7 @@ METHOD = "CB"                       # recommendation method
 USERS_EXTENDED_FILE = "./data/C1ku_users_extended.csv"
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 50
+NO_RECOMMENDED_ARTISTS = 300
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -208,7 +208,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 20 #UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -560,7 +560,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
 
-    if True:
+    if False:
         METHOD = "DF_GENDER"
         print METHOD
         K_CF = 25
@@ -590,17 +590,17 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
 
-    if False:
+    if True:
         METHOD = "DF_COUNTRY"
         print METHOD
         K_CF = 25
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
-        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
-        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 12.26, MAR: 0.54, F1 Score: 1.04
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 10.15, MAR: 2.20, F1 Score: 3.61
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 9.04, MAR: 3.90, F1 Score: 5.45
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 7.78, MAR: 6.51, F1 Score: 7.09
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 6.01, MAR: 12.17, F1 Score: 8.05
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 5.24, MAR: 15.69, F1 Score: 7.85
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.69, MAR: 18.55, F1 Score: 7.49
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.51, MAR: 27.15, F1 Score: 6.22
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.90, MAR: 33.12, F1 Score: 5.34
