@@ -28,7 +28,7 @@ METHOD = "CB"                       # recommendation method
 USERS_EXTENDED_FILE = "./data/C1ku_users_extended.csv"
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 50
+NO_RECOMMENDED_ARTISTS = 20
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -208,7 +208,7 @@ def run():
     avg_rec = 0;        # mean recall
 
     # For all users in our data (UAM)
-    no_users = 20 #UAM.shape[0]
+    no_users = UAM.shape[0]
     no_artists = UAM.shape[1]
 
     # Init sparse user count
@@ -565,15 +565,15 @@ if __name__ == '__main__':
         print METHOD
         K_CF = 25
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
-        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
-        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 14.66, MAR: 0.63, F1 Score: 1.21
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 12.30, MAR: 2.57, F1 Score: 4.26
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 10.98, MAR: 4.51, F1 Score: 6.40
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 9.32, MAR: 7.47, F1 Score: 8.29
+        # NO_RECOMMENDED_ARTISTS = 50: MAP 7.09, MAR: 13.70, F1 Score: 9.34
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 6.13, MAR: 17.50, F1 Score: 9.08
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 5.49, MAR: 20.65, F1 Score: 8.67
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 4.06, MAR: 29.85, F1 Score: 7.15
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 3.34, MAR: 36.23, F1 Score: 6.12
 
     if False:
         METHOD = "DF_AGE"
