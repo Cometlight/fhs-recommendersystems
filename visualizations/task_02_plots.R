@@ -172,39 +172,150 @@ grid()
 legend(20, 3, c("MAP", "MAR", "F1 Score"), lty=c(1,1), lwd=2, col=c("red", "blue", "darkgreen"))
 par(new=FALSE)
 
+# Hybrid Score-Based
+no_recommendations <- c(1, 5, 10, 20, 50, 75, 100, 200, 300)
+hr_scb_MAP <- c(9.66, 8.47, 7.64, 6.74, 5.44, 4.82, 4.4, 3.41, 2.89)
+hr_scb_MAR <- c(0.78, 2.05, 3.32, 5.57, 10.82, 14.11, 16.98, 25.76, 32.26)
+hr_scb_F1 <- c(1.45, 3.30, 4.64, 6.1, 7.24, 7.19, 6.99, 6.03, 5.3)
+
+# DF_GENDER
+df_gender_MAP <- c(14.66, 12.30, 10.98, 9.32, 7.09, 6.13, 5.49, 4.06, 3.34)
+df_gender_MAR <- c(0.63, 2.57, 4.51, 7.47, 13.70, 17.50, 20.65, 29.85, 36.23)
+df_gender_F1 <- c(1.12, 4.26, 6.4, 8.29, 9.34, 9.08, 8.67, 7.15, 6.12)
+
+# DF_AGE
+df_age_MAP <- c(1.44, 1.42, 1.29, 1.32, 1.31, 1.27, 1.3, 1.23, 1.2)
+df_age_MAR <- c(0.06, 0.28, 0.48, 0.96, 2.44, 3.56, 4.81, 9.09, 13.18)
+df_age_F1 <- c(0.11, 0.46, 0.7, 1.11, 1.71, 1.88, 2.05, 2.17, 2.2)
+
+# DF_COUNTRY
+df_country_MAP <- c(12.26, 10.15, 9.04, 7.78, 6.01, 5.24, 4.69, 3.51, 2.9)
+df_country_MAR <- c(0.54, 2.2, 3.9, 6.51, 12.17, 15.69, 18.55, 27.15, 33.12)
+df_country_F1 <- c(1.04, 3.61, 5.45, 7.09, 8.05, 7.85, 7.49, 6.22, 5.34)
+
+GetCol <- function(r, g, b) {
+  return( rgb(r, g, b, maxColorValue=255) )
+}
+
+cf_col <- GetCol(255, 179,   0)
+rb_col <- GetCol(128,  62, 117)
+rb2_col <- GetCol(255, 104,   0)
+hrb_col <- GetCol(166, 189, 215)
+hsb_col <- GetCol(193,   0,  32)
+hr_scb_col <- GetCol(  0, 125,  52)
+cb_col <- GetCol(246, 118, 142)
+pb_col <- GetCol(0,  83, 138)
+df_gender_col <- GetCol(255, 122,  92)
+df_age_col <- GetCol(244, 200,   0)
+df_country_col <- GetCol(89,  51,  21)
 
 # Compare results: MAP/MAR
-plot(cf_MAR, cf_MAP, type="l", xaxt="n", yaxt="n", xlab="MAR [%]", ylab="MAP [%]", col="red", ylim=c(0,16), xlim=c(0,40), main="Comparison of different Recommender Systems")
-points(cf_MAR, cf_MAP, pch=20, col="red")
+plot(cf_MAR, cf_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="MAR [%]", ylab="MAP [%]", col=cf_col, ylim=c(0,16), xlim=c(0,40), main="Comparison of different Recommender Systems")
+points(cf_MAR, cf_MAP, pch=16, col=cf_col)
 par(new=TRUE)
-plot(rb_MAR, rb_MAP, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col="blue", ylim=c(0,16), xlim=c(0,40))
-points(rb_MAR, rb_MAP, pch=20, col="blue")
+plot(rb_MAR, rb_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=rb_col, ylim=c(0,16), xlim=c(0,40))
+points(rb_MAR, rb_MAP, pch=16, col=rb_col)
 par(new=TRUE)
-plot(rb2_MAR, rb2_MAP, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col="darkgreen", ylim=c(0,16), xlim=c(0,40))
-points(rb2_MAR, rb2_MAP, pch=20, col="darkgreen")
+plot(rb2_MAR, rb2_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=rb2_col, ylim=c(0,16), xlim=c(0,40))
+points(rb2_MAR, rb2_MAP, pch=16, col=rb2_col)
 par(new=TRUE)
-plot(hrb_MAR, hrb_MAP, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col="orange", ylim=c(0,16), xlim=c(0,40))
-points(hrb_MAR, hrb_MAP, pch=20, col="orange")
+plot(hrb_MAR, hrb_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=hrb_col, ylim=c(0,16), xlim=c(0,40))
+points(hrb_MAR, hrb_MAP, pch=16, col=hrb_col)
 par(new=TRUE)
-plot(sort(cb_MAR), cb_MAP[order(cb_MAR)], type="l", xaxt="n", yaxt="n", xlab="", ylab="", col="magenta", ylim=c(0,16), xlim=c(0,40))
-points(sort(cb_MAR), cb_MAP[order(cb_MAR)], pch=20, col="magenta")
+plot(hsb_MAR, hsb_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=hsb_col, ylim=c(0,16), xlim=c(0,40))
+points(hsb_MAR, hsb_MAP, pch=16, col=hsb_col)
+par(new=TRUE)
+plot(hr_scb_MAR, hr_scb_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=hr_scb_col, ylim=c(0,16), xlim=c(0,40))
+points(hr_scb_MAR, hr_scb_MAP, pch=16, col=hr_scb_col)
+par(new=TRUE)
+plot(sort(cb_MAR), cb_MAP[order(cb_MAR)], lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=cb_col, ylim=c(0,16), xlim=c(0,40))
+points(sort(cb_MAR), cb_MAP[order(cb_MAR)], pch=16, col=cb_col)
+par(new=TRUE)
+plot(pb_MAR, pb_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=pb_col, ylim=c(0,16), xlim=c(0,40))
+points(pb_MAR, pb_MAP, pch=16, col=pb_col)
+par(new=TRUE)
+plot(df_gender_MAR, df_gender_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=df_gender_col, ylim=c(0,16), xlim=c(0,40))
+points(df_gender_MAR, df_gender_MAP, pch=16, col=df_gender_col)
+par(new=TRUE)
+plot(df_age_MAR, df_age_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=df_age_col, ylim=c(0,16), xlim=c(0,40))
+points(df_age_MAR, df_age_MAP, pch=16, col=df_age_col)
+par(new=TRUE)
+plot(df_country_MAR, df_country_MAP, lwd=2, type="l", xaxt="n", yaxt="n", xlab="", ylab="", col=df_country_col, ylim=c(0,16), xlim=c(0,40))
+points(df_country_MAR, df_country_MAP, pch=16, col=df_country_col)
 axis(1, at=seq(0,40, by=5))
 axis(2, at=seq(0, 16, by=1))
 grid()
-legend(15, 15, c("Collaborative Filtering", "Hybrid (CF-CB, rank-based)", "Content Based", "Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("red", "orange", "magenta", "blue", "darkgreen"))
+legend(24, 16, c(
+                 "Collaborative Filtering",
+                 "CF - Demographic Filtering (Gender)",
+                 "CF - Demographic Filtering (Country)",
+                 "Hybrid (CF-CB, rank-based)",
+                 "Hybrid (CF-CB, score-based)",
+                 "Hybrid (CF-CB, set-based)",
+                 "Pobularity Based",
+                 "Content Based", 
+                 "CF - Demographic Filtering (Age)",
+                 "Random Baseline (user picking)",
+                 "Random Baseline"
+                 ), lty=c(1,1), lwd=3, 
+           col=c(
+                 cf_col,
+                 df_gender_col,
+                 df_country_col,
+                 hrb_col,
+                 hr_scb_col,
+                 hsb_col,
+                 pb_col,
+                 cb_col,
+                 df_age_col,
+                 rb_col,
+                 rb2_col
+                 ))
 par(new=FALSE)
 
 # Compare results: F1/number of recommendations
-plot(no_recommendations, seq(0, 15, length.out=(length(no_recommendations))), type="n", xlab="Number of Recommendations", ylab="F1 Score", main="Comparison of different Recommender Systems")
-lines(no_recommendations, rb_F1, col="blue")
-lines(no_recommendations, rb2_F1, col="darkgreen")
-lines(no_recommendations, cf_F1, col="red")
-lines(no_recommendations, cb_F1, col="orange")
-lines(no_recommendations, hrb_F1, col="magenta")
+plot(no_recommendations, seq(0, 20, length.out=(length(no_recommendations))), type="n", xlab="Number of Recommendations", ylab="F1 Score", main="Comparison of different Recommender Systems")
+lines(no_recommendations, cf_F1, col=cf_col, lwd=2)
+lines(no_recommendations, rb_F1, col=rb_col, lwd=2)
+lines(no_recommendations, rb2_F1, col=rb2_col, lwd=2)
+lines(no_recommendations, hrb_F1, col=hrb_col, lwd=2)
+lines(no_recommendations, hsb_F1, col=hsb_col, lwd=2)
+lines(no_recommendations, hr_scb_F1, col=hr_scb_col, lwd=2)
+lines(no_recommendations, cb_F1, col=cb_col, lwd=2)
+lines(no_recommendations, pb_F1, col=pb_col, lwd=2)
+lines(no_recommendations, df_gender_F1, col=df_gender_col, lwd=2)
+lines(no_recommendations, df_age_F1, col=df_age_col, lwd=2)
+lines(no_recommendations, df_country_F1, col=df_country_col, lwd=2)
+
 lines(c(50, 50), c(0,15), col="black", lty="dashed")
 text(65, 14.5, "peak")
 grid()
-legend(140, 15.2, c("Collaborative Filtering", "Hybrid (CF-CB, rank-based)", "Content Based", "Random Baseline (user picking)", "Random Baseline"), lty=c(1,1), lwd=2, col=c("red", "magenta", "orange", "blue", "darkgreen"))
+legend(175, 20, c(
+                    "Collaborative Filtering",
+                    "CF - Demographic Filtering (Gender)",
+                    "CF - Demographic Filtering (Country)",
+                    "Hybrid (CF-CB, rank-based)",
+                    "Hybrid (CF-CB, score-based)",
+                    "Hybrid (CF-CB, set-based)",
+                    "Pobularity Based",
+                    "Content Based", 
+                    "CF - Demographic Filtering (Age)",
+                    "Random Baseline (user picking)",
+                    "Random Baseline"
+                  ), lty=c(1,1), lwd=3, 
+                  col=c(
+                    cf_col,
+                    df_gender_col,
+                    df_country_col,
+                    hrb_col,
+                    hr_scb_col,
+                    hsb_col,
+                    pb_col,
+                    cb_col,
+                    df_age_col,
+                    rb_col,
+                    rb2_col
+                  ))
 par(new=FALSE)
 
 

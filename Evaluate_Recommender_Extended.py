@@ -29,7 +29,7 @@ METHOD = "CB"                       # recommendation method
 USERS_EXTENDED_FILE = "./data/C1ku_users_extended.csv"
 
 NF = 10              # number of folds to perform in cross-validation
-NO_RECOMMENDED_ARTISTS = 20
+NO_RECOMMENDED_ARTISTS = 300
 VERBOSE = True     # verbose output?
 
 # Function to read metadata (users or artists)
@@ -438,7 +438,7 @@ if __name__ == '__main__':
     # Load AAM
     print "Loading AAM... ",
     #AAM = np.loadtxt(AAM_FILE, delimiter='\t', dtype=np.float32)
-    AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
+    # AAM = pd.read_csv(AAM_FILE, delimiter='\t', dtype=np.float32, header=None).values # greatly increase reading speed via pandas
     print "Done."
     print "Loading USERS_EXTENDED...",
     USERS_EXTENDED = pd.read_csv(USERS_EXTENDED_FILE, delimiter='\t', header=0).values
@@ -542,7 +542,7 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200:
         # NO_RECOMMENDED_ARTISTS = 300:
 
-    if True:
+    if False:
         METHOD = "HR_SEB"
         print METHOD
         K_CF = 25
@@ -592,22 +592,22 @@ if __name__ == '__main__':
         # NO_RECOMMENDED_ARTISTS = 200: MAP: 4.06, MAR: 29.85, F1 Score: 7.15
         # NO_RECOMMENDED_ARTISTS = 300: MAP: 3.34, MAR: 36.23, F1 Score: 6.12
 
-    if False:
+    if True:
         METHOD = "DF_AGE"
         print METHOD
         K_CF = 25
         run()
-        # NO_RECOMMENDED_ARTISTS = 1: MAP: 9.66, MAR: 0.78, F1 Score: 1.45
-        # NO_RECOMMENDED_ARTISTS = 5: MAP: 8.47, MAR: 2.05, F1 Score: 3.30
-        # NO_RECOMMENDED_ARTISTS = 10: MAP: 7.64, MAR: 3.34, F1 Score: 4.64
-        # NO_RECOMMENDED_ARTISTS = 20: MAP: 6.74, MAR: 5.57, F1 Score: 6.10
-        # NO_RECOMMENDED_ARTISTS = 50: MAP: 5.44, MAR: 10.82, F1 Score: 7.24
-        # NO_RECOMMENDED_ARTISTS = 75: MAP: 4.82, MAR: 14.11, F1 Score: 7.19
-        # NO_RECOMMENDED_ARTISTS = 100: MAP: 4.40, MAR: 16.98, F1 Score: 6.99
-        # NO_RECOMMENDED_ARTISTS = 200: MAP: 3.41, MAR: 25.76, F1 Score: 6.03
-        # NO_RECOMMENDED_ARTISTS = 300: MAP: 2.89, MAR: 32.26, F1 Score: 5.30
+        # NO_RECOMMENDED_ARTISTS = 1: MAP: 1.44, MAR: 0.06, F1 Score: 0.11
+        # NO_RECOMMENDED_ARTISTS = 5: MAP: 1.42, MAR: 0.28, F1 Score: 0.46
+        # NO_RECOMMENDED_ARTISTS = 10: MAP: 1.29, MAR: 0.48, F1 Score: 0.70
+        # NO_RECOMMENDED_ARTISTS = 20: MAP: 1.32, MAR: 0.96, F1 Score: 1.11
+        # NO_RECOMMENDED_ARTISTS = 50: MAP: 1.31, MAR: 2.44, F1 Score: 1.71
+        # NO_RECOMMENDED_ARTISTS = 75: MAP: 1.27, MAR: 3.56, F1 Score: 1.88
+        # NO_RECOMMENDED_ARTISTS = 100: MAP: 1.30, MAR: 4.81, F1 Score: 2.05
+        # NO_RECOMMENDED_ARTISTS = 200: MAP: 1.23, MAR: 9.09, F1 Score: 2.17
+        # NO_RECOMMENDED_ARTISTS = 300: MAP: 1.20, MAR: 13.18, F1 Score: 2.20
 
-    if True:
+    if False:
         METHOD = "DF_COUNTRY"
         print METHOD
         K_CF = 25
